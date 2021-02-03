@@ -10,6 +10,13 @@ public:
 	void setEndPos(sf::Vector2f endPosIn);
 	int color;
 	float hitTime;
+	float holdNoteLength;
+	enum class NoteType
+	{
+		PRESS,
+		HOLD
+	};
+	NoteType noteType;
 private:
 	
 	sf::Vector2f direction;

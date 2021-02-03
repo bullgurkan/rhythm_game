@@ -45,7 +45,7 @@ public:
     /// \brief Key codes
     ///
     ////////////////////////////////////////////////////////////
-    enum Key
+    enum class Key
     {
         Unknown = -1, ///< Unhandled key
         A = 0,        ///< The A key

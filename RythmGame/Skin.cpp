@@ -1,15 +1,17 @@
 #include "Skin.hpp"
 #include <SFML/Graphics/ConvexShape.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 Skin::Skin(float middleRadius, std::vector<sf::Color> colors, sf::Vector2f screenSize) : middleRadius{ middleRadius }, noteShape(), middleShapes(), colors{ colors }, screenCenter(screenSize.x/2, screenSize.y/2)
 {
 	sf::ConvexShape* noteShapeTri = new sf::ConvexShape(3);
-	noteShapeTri->setPoint(0, sf::Vector2f(10, 20));
-	noteShapeTri->setPoint(1, sf::Vector2f(20, 0));
-	noteShapeTri->setPoint(2, sf::Vector2f(0, 0));
+	noteShapeTri->setPoint(0, sf::Vector2f(0, 10));
+	noteShapeTri->setPoint(1, sf::Vector2f(25, 0));
+	noteShapeTri->setPoint(2, sf::Vector2f(25, 20));
 
-	noteShapeTri->setOrigin(sf::Vector2f(10, 20));
+	noteShapeTri->setOrigin(sf::Vector2f(0, 10));
 
 	noteShape = noteShapeTri;
 }
@@ -23,9 +25,11 @@ Skin::~Skin()
 	}
 }
 
-void Skin::renderNote(long time, sf::RenderWindow &window, sf::Vector2f position, float rotation, int colorId)
+void Skin::renderNote(long time, sf::RenderWindow &window, sf::Vector2f position, sf::Vector2f prevPos, int colorId)
 {
-	noteShape->setPosition(screenCenter);
+	noteShape->setPosition(screenCenter + position);
+
+	float rotation = (double)std::atan2f(prevPos.y - position.y, prevPos.x - position.x) * 180 / M_PI;
 	noteShape->setRotation(rotation);
 	noteShape->setFillColor(colors[colorId]);
 	window.draw(*noteShape);

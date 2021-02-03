@@ -1,8 +1,9 @@
 #include "Song.hpp"
 
 const sf::Vector2f zeroVector(0,0);
+const float tickSize = 0.01f;
 
-Song::Song(std::vector<Note> &notes, float timeToKeepPastNotes, Skin &skin) : notes{ notes }, noteTimeInBuffer{ timeToKeepPastNotes }, skin{ skin }
+Song::Song(std::vector<Note> notes, float timeToKeepPastNotes, Skin &skin) : notes{ notes }, noteTimeInBuffer{ timeToKeepPastNotes }, skin{ skin }
 {
 	int amountOfcolors = 0;
 	for (Note& note : notes)
@@ -32,8 +33,9 @@ void Song::render(long time, sf::RenderWindow &window)
 		sf::Vector2f pos = (*it).getPosition(time);
 		if (pos != zeroVector)
 		{
+			
 			//std::cout << "render" << std::endl;
-			skin.renderNote(time, window, pos, 0, 0);
+			skin.renderNote(time, window, pos, (*it).getPosition(time - tickSize), 0);
 			++it;
 		}
 		else
@@ -48,14 +50,14 @@ void Song::render(long time, sf::RenderWindow &window)
 /**
 * pops the note with color color and returns how late the note was poped(this can be negative if it's too early)
 */
-float Song::popNoteWithColor(long time, int colorToPop)
+float Song::popNoteWithColor(long time, int colorToPop, Note::NoteType noteType)
 {
 	clearOldNotesInPopBuffer(time);
 
 
 	for (std::vector<Note>::iterator it = nonPoppedNoteBuffer.begin(); it != nonPoppedNoteBuffer.end(); ++it)
 	{
-		if (it->color == colorToPop)
+		if (it->color == colorToPop && it->noteType == noteType)
 		{
 			float hitdelta = it->hitTime - time;
 			nonPoppedNoteBuffer.erase(it);
@@ -63,19 +65,34 @@ float Song::popNoteWithColor(long time, int colorToPop)
 		}
 	}
 
-	for (Note& note : notes)
+	for (std::vector<Note>::iterator it = notes.begin(); it != notes.end(); ++it)
 	{
-		float hitdelta = note.hitTime - time;
-		if (hitdelta < -noteTimeInBuffer)
-		{
-			if (note.color == colorToPop)
+		
+		
+			if (it->color == colorToPop && it->noteType == noteType)
 			{
-				return hitdelta;
+				float hitdelta = it->hitTime - time;
+				switch (noteType)
+				{
+				case Note::NoteType::PRESS:
+					if (hitdelta < -noteTimeInBuffer)
+					{
+						notes.erase(it);
+						return hitdelta;
+					}
+				case Note::NoteType::HOLD:
+					if (hitdelta < -it->holdNoteLength)
+					{
+
+					}
+				default:
+					break;
+				}
+				
+				
 			}
-		}
-		else
-			return 0;
-			
+		
+		
 	}
 
 	return 0;
