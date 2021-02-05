@@ -66,3 +66,6 @@ void Skin::renderMiddle(long time, sf::RenderWindow &window, float rotation)
 		window.draw(*shape);
 	}
 }
+
+void Skin::showHitMark(HitType hitType)
+{}

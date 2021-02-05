@@ -5,17 +5,19 @@
 class Note 
 {
 public:
-	Note(float hitTime, sf::Vector2f direction, int color);
+	enum class NoteType
+	{
+		PRESS,
+		HOLD_START,
+		HOLD_END
+	};
+	Note(float hitTime, sf::Vector2f direction, int color, NoteType type);
+	Note(float hitTime, sf::Vector2f direction, int color, float holdNoteLength);
 	sf::Vector2f getPosition(long time);
 	void setEndPos(sf::Vector2f endPosIn);
 	int color;
 	float hitTime;
 	float holdNoteLength;
-	enum class NoteType
-	{
-		PRESS,
-		HOLD
-	};
 	NoteType noteType;
 private:
 	
