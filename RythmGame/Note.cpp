@@ -2,7 +2,7 @@
 #include <iostream>
 
 
-Note::Note(float hitTime, sf::Vector2f direction, int color, NoteType noteType) : hitTime{ hitTime }, endPos{ sf::Vector2f(0,0) }, direction{ direction }, color{ color }, noteType{ noteType }, holdNoteLength{0}
+Note::Note(int hitTime, sf::Vector2f direction, int color, NoteType noteType) : hitTime{ hitTime }, endPos{ sf::Vector2f(0,0) }, direction{ direction }, color{ color }, noteType{ noteType }, holdNoteLength{0}
 {
 	if (noteType == NoteType::HOLD_END)
 	{
@@ -11,13 +11,17 @@ Note::Note(float hitTime, sf::Vector2f direction, int color, NoteType noteType) 
 	}
 		
 }
-Note::Note(float hitTime, sf::Vector2f direction, int color, float holdNoteLength) : hitTime{ hitTime }, endPos{ sf::Vector2f(0,0) }, direction{ direction }, color{ color }, noteType{ NoteType::HOLD_END }, holdNoteLength{ holdNoteLength }
+Note::Note(int hitTime, sf::Vector2f direction, int color, int holdNoteLength) : hitTime{ hitTime }, endPos{ sf::Vector2f(0,0) }, direction{ direction }, color{ color }, noteType{ NoteType::HOLD_END }, holdNoteLength{ holdNoteLength }
 {}
 
-sf::Vector2f Note::getPosition(long time)
+sf::Vector2f Note::getPosition(int time)
 {
 	if (time <= hitTime)
-		return endPos + direction * (hitTime - time);
+	{
+		int deltaTime = hitTime - time;
+		return endPos + sf::Vector2f(direction.x * deltaTime, direction.y * deltaTime);
+	}
+		
 	else
 		return sf::Vector2f(0, 0);
 }

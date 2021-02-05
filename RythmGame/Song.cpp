@@ -1,9 +1,9 @@
 #include "Song.hpp"
+#include <iostream>
 
 const sf::Vector2f zeroVector(0, 0);
-const float tickSize = 0.01f;
 
-Song::Song(std::vector<Note> notes, float perfectTime, float hitTime, float missTime, Skin& skin) : notes{ notes }, perfectTime{ perfectTime }, hitTime{ hitTime }, missTime{ missTime }, skin{ skin }, inputs()
+Song::Song(std::vector<Note> notes, int perfectTime, int hitTime, int missTime, Skin& skin) : notes{ notes }, perfectTime{ perfectTime }, hitTime{ hitTime }, missTime{ missTime }, skin{ skin }, inputs(), totalMissTimeInMs{ 0 }
 {
 	int amountOfcolors = 0;
 	for (Note& note : notes)
@@ -24,7 +24,7 @@ Song::~Song()
 
 }
 
-void Song::render(long time, sf::RenderWindow& window)
+void Song::render(int time, sf::RenderWindow& window)
 {
 	skin.renderMiddle(time, window, 0);
 	std::vector<Note>::iterator it = notes.begin();
@@ -35,7 +35,7 @@ void Song::render(long time, sf::RenderWindow& window)
 		{
 
 			//std::cout << "render" << std::endl;
-			skin.renderNote(time, window, pos, (*it).getPosition(time - tickSize), 0);
+			skin.renderNote(time, window, pos, (*it).getPosition(time - 1), 0);
 			++it;
 		}
 		else
@@ -59,42 +59,43 @@ void Song::popNoteWithColor(InputData inputData)
 	//clearOldNotesInPopBuffer(inputData.time);
 
 
-
+	std::cout << "pop note" << std::endl;
+	std::cout << nonPoppedNoteBuffer.begin()._Ptr << std::endl;
 	for (std::vector<Note>::iterator it = nonPoppedNoteBuffer.begin(); it != nonPoppedNoteBuffer.end(); ++it)
 	{
+
 		if (it->color == inputData.colorToPop)
 		{
-
-			float hitDelta = inputData.time - it->hitTime;
-			nonPoppedNoteBuffer.erase(it);
+			std::cout << it._Ptr << " 1 " << nonPoppedNoteBuffer.end()._Ptr << std::endl;
+			int hitDelta = inputData.time - it->hitTime;
 			noteHitUpdate(hitDelta, inputData.colorToPop, it->noteType);
-
+			it = nonPoppedNoteBuffer.erase(it);
+			std::cout << it._Ptr << " " << nonPoppedNoteBuffer.end()._Ptr << std::endl;
 		}
 	}
 
 	for (std::vector<Note>::iterator it = notes.begin(); it != notes.end(); ++it)
 	{
-
+		std::cout << inputData.time - it->hitTime << std::endl;
 
 		if (it->color == inputData.colorToPop)
 		{
-			float hitDelta = inputData.time - it->hitTime;
+			int hitDelta = inputData.time - it->hitTime;
 			switch (inputData.inputType)
 			{
 			case InputManager::InputType::PRESSED:
-				if ((it->noteType == Note::NoteType::HOLD_START || it->noteType == Note::NoteType::PRESS) && hitDelta < -missTime)
+				if ((it->noteType == Note::NoteType::HOLD_START || it->noteType == Note::NoteType::PRESS) && hitDelta > -missTime)
 				{
 					notes.erase(it);
-
 					noteHitUpdate(hitDelta, inputData.colorToPop, it->noteType);
+					return;
 				}
 			case InputManager::InputType::RELEASED:
 				if (it->noteType == Note::NoteType::HOLD_END && hitDelta < -it->holdNoteLength)
 				{
 					notes.erase(it);
 					noteHitUpdate(hitDelta, inputData.colorToPop, it->noteType);
-
-
+					return;
 				}
 			default:
 				break;
@@ -107,7 +108,7 @@ void Song::popNoteWithColor(InputData inputData)
 	}
 }
 
-void Song::clearOldNotesInPopBuffer(long time)
+void Song::clearOldNotesInPopBuffer(int time)
 {
 	for (std::vector<Note>::iterator it = nonPoppedNoteBuffer.begin(); it != nonPoppedNoteBuffer.end(); ++it)
 	{
@@ -128,7 +129,6 @@ void Song::noteHitUpdate(int hitDelta, int color, Note::NoteType noteType)
 	{
 		if (hitDelta < -missTime)
 			return;
-
 		skin.showHitMark(Skin::HitType::EARLY_MISS);
 		totalMissTimeInMs += missTime;
 		if (noteType == Note::NoteType::HOLD_START)
@@ -139,8 +139,9 @@ void Song::noteHitUpdate(int hitDelta, int color, Note::NoteType noteType)
 		skin.showHitMark(Skin::HitType::EARLY_HIT);
 		totalMissTimeInMs -= hitDelta;
 	}
-	if (hitDelta < perfectTime)
+	else if (hitDelta < perfectTime)
 	{
+		std::cout << "perfect?" << std::endl;
 		skin.showHitMark(Skin::HitType::PERFECT);
 	}
 	else if (hitDelta < hitTime)

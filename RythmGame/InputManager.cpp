@@ -1,23 +1,32 @@
 #include "InputManager.hpp"
+#include "Song.hpp"
 
 InputManager::InputManager() : keyBinds{ { sf::Keyboard::Key::D, sf::Keyboard::Key::F, sf::Keyboard::Key::J, sf::Keyboard::Key::K } }, keyPressed(keyBinds.size())
 {}
 
-void InputManager::pollInputs(float time, Song &song)
+void InputManager::pollInputs(int time, Song &song)
 {
 
-    for (size_t i = 0; i < keyBinds.size(); i++)
+    for (int i = 0; i < keyBinds.size(); i++)
     {
         
         if (sf::Keyboard::isKeyPressed(keyBinds[i]))
         {
             if (!keyPressed[i])
-                song.popNoteWithColor(time, i, KeyEvents::PRESSED);
+            {
+                keyPressed[i] = true;
+                song.popNoteWithColor(InputData(time, i, InputType::PRESSED));
+            }
+                
         }
         else
         {
             if (keyPressed[i])
-                song.popNoteWithColor(time, i, KeyEvents::RELEASED);
+            {
+                keyPressed[i] = false;
+                song.popNoteWithColor(InputData(time, i, InputType::RELEASED));
+            }
+                
         }
     }
 

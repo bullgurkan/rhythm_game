@@ -4,7 +4,10 @@
 struct InputData
 {
 public:
-	long time;
+	int time;
 	int colorToPop;
 	InputManager::InputType inputType;
+
+	InputData(int time, int colorToPop, InputManager::InputType inputType) :time{ time }, colorToPop{ colorToPop }, inputType{ inputType } {};
+
 };

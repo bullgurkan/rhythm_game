@@ -3,6 +3,7 @@
 #include <SFML/Graphics/CircleShape.hpp>
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <iostream>
 
 Skin::Skin(float middleRadius, std::vector<sf::Color> colors, sf::Vector2f screenSize) : middleRadius{ middleRadius }, noteShape(), middleShapes(), colors{ colors }, screenCenter(screenSize.x/2, screenSize.y/2)
 {
@@ -25,11 +26,11 @@ Skin::~Skin()
 	}
 }
 
-void Skin::renderNote(long time, sf::RenderWindow &window, sf::Vector2f position, sf::Vector2f prevPos, int colorId)
+void Skin::renderNote(int time, sf::RenderWindow &window, sf::Vector2f position, sf::Vector2f prevPos, int colorId)
 {
 	noteShape->setPosition(screenCenter + position);
 
-	float rotation = (double)std::atan2f(prevPos.y - position.y, prevPos.x - position.x) * 180 / M_PI;
+	float rotation = std::atan2f(prevPos.y - position.y, prevPos.x - position.x) * 180 / (float)M_PI;
 	noteShape->setRotation(rotation);
 	noteShape->setFillColor(colors[colorId]);
 	window.draw(*noteShape);
@@ -58,7 +59,7 @@ void Skin::prepareMiddleForSong(int amountOfColors)
 	}
 }
 
-void Skin::renderMiddle(long time, sf::RenderWindow &window, float rotation)
+void Skin::renderMiddle(int time, sf::RenderWindow &window, float rotation)
 {
 	
 	for (sf::Shape *shape : middleShapes)
@@ -68,4 +69,6 @@ void Skin::renderMiddle(long time, sf::RenderWindow &window, float rotation)
 }
 
 void Skin::showHitMark(HitType hitType)
-{}
+{
+	std::cout << (int)hitType << std::endl;
+}

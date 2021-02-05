@@ -15,9 +15,9 @@ public:
 	};
 	Skin(float middleRadius, std::vector<sf::Color> colors, sf::Vector2f screenSize);
 	~Skin();
-	void renderNote(long time, sf::RenderWindow &window, sf::Vector2f position, sf::Vector2f prevPos, int colorId);
+	void renderNote(int time, sf::RenderWindow &window, sf::Vector2f position, sf::Vector2f prevPos, int colorId);
 	void prepareMiddleForSong(int amountOfColors);
-	void renderMiddle(long time, sf::RenderWindow &window, float rotation);
+	void renderMiddle(int time, sf::RenderWindow &window, float rotation);
 	void showHitMark(HitType hitType);
 private:
 	std::vector<sf::Color> colors;

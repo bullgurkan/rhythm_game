@@ -1,13 +1,13 @@
 #pragma once
 #include <vector>
 #include <SFML/Window/Keyboard.hpp>
-#include "Song.hpp"
+class Song;
 
 class InputManager
 {
 public:
 	InputManager();
-	void pollInputs(float time, Song &song);
+	void pollInputs(int time, Song &song);
 	enum class InputType
 	{
 		PRESSED,

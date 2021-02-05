@@ -21,8 +21,8 @@ void GameManager::LoadSong()
     }
         
     std::vector<Note> notes;
-    notes.push_back(Note(10000, sf::Vector2f(0.01f, 0.01f), 0));
-    loadedSong = new Song(notes, 1.0f, skin);
+    notes.push_back(Note(10000, sf::Vector2f(0.01f, 0.01f), 0, Note::NoteType::PRESS));
+    loadedSong = new Song(notes, 1000, 3000, 8000, skin);
     
 }
 
