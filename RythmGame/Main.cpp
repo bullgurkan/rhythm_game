@@ -1,5 +1,6 @@
 #include "GameManager.hpp"
-
+#include "SongLoader.hpp"
+#include <iostream>
 
 int main()
 {
@@ -7,5 +8,7 @@ int main()
     gm.LoadSong();
     gm.Start();
 
+    
+    
     return 0;
 }

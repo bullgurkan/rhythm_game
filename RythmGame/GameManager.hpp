@@ -3,6 +3,7 @@
 #include "Song.hpp"
 #include <chrono>
 #include "InputManager.hpp"
+#include "SongLoader.hpp"
 
 class GameManager
 {
@@ -17,4 +18,6 @@ private:
 	Skin skin;
 	Song *loadedSong;
 	InputManager input;
+	SongLoader songLoader;
+	std::vector<SongData> songsInMenu;
 };

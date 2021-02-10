@@ -150,22 +150,31 @@
       <AdditionalLibraryDirectories>$(SolutionDir)SFML\depLibs;$(SolutionDir)SFML\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-audio-s.lib;sfml-graphics-s.lib;sfml-network-s.lib;sfml-system-s.lib;sfml-window-s.lib;opengl32.lib;freetype.lib;winmm.lib;gdi32.lib;openal32.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ogg.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y /d  "$(SolutionDir)SFML\bin\*.dll" "$(TargetDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="LineNotePosFunc.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Note.cpp" />
     <ClCompile Include="Skin.cpp" />
     <ClCompile Include="Song.cpp" />
+    <ClCompile Include="SongLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameManager.hpp" />
     <ClInclude Include="InputData.hpp" />
     <ClInclude Include="InputManager.hpp" />
+    <ClInclude Include="LineNotePosFunc.hpp" />
     <ClInclude Include="Note.hpp" />
+    <ClInclude Include="NotePosFunc.hpp" />
     <ClInclude Include="Skin.hpp" />
     <ClInclude Include="Song.hpp" />
+    <ClInclude Include="SongData.hpp" />
+    <ClInclude Include="SongLoader.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

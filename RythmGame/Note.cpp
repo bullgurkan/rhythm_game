@@ -2,7 +2,7 @@
 #include <iostream>
 
 
-Note::Note(int hitTime, sf::Vector2f direction, int color, NoteType noteType) : hitTime{ hitTime }, endPos{ sf::Vector2f(0,0) }, direction{ direction }, color{ color }, noteType{ noteType }, holdNoteLength{0}
+Note::Note(int hitTime, NotePosFunc *func, int color, NoteType noteType) : hitTime{ hitTime }, endPos{ sf::Vector2f(0,0) }, func{ func }, color{ color }, noteType{ noteType }, holdNoteLength{0}
 {
 	if (noteType == NoteType::HOLD_END)
 	{
@@ -11,15 +11,19 @@ Note::Note(int hitTime, sf::Vector2f direction, int color, NoteType noteType) : 
 	}
 		
 }
-Note::Note(int hitTime, sf::Vector2f direction, int color, int holdNoteLength) : hitTime{ hitTime }, endPos{ sf::Vector2f(0,0) }, direction{ direction }, color{ color }, noteType{ NoteType::HOLD_END }, holdNoteLength{ holdNoteLength }
+Note::Note(int hitTime, NotePosFunc* func, int color, int holdNoteLength) : hitTime{ hitTime }, endPos{ sf::Vector2f(0,0) }, func{ func }, color{ color }, noteType{ NoteType::HOLD_END }, holdNoteLength{ holdNoteLength }
 {}
 
-sf::Vector2f Note::getPosition(int time)
+Note::~Note()
+{
+	delete func;
+}
+
+sf::Vector2f Note::getPosition(int time, Skin &skin)
 {
 	if (time <= hitTime)
 	{
-		int deltaTime = hitTime - time;
-		return endPos + sf::Vector2f(direction.x * deltaTime, direction.y * deltaTime);
+		return endPos + func->GetPosition(endPos, hitTime - time, skin);
 	}
 		
 	else
@@ -28,6 +32,7 @@ sf::Vector2f Note::getPosition(int time)
 
 void Note::setEndPos(sf::Vector2f endPosIn)
 {
+	
 	endPos = endPosIn;
 }
 
