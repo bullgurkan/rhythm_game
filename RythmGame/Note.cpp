@@ -2,7 +2,7 @@
 #include <iostream>
 
 
-Note::Note(int hitTime, NotePosFunc *func, int color, NoteType noteType) : hitTime{ hitTime }, endPos{ sf::Vector2f(0,0) }, func{ func }, color{ color }, noteType{ noteType }, holdNoteLength{0}
+Note::Note(int hitTime, NotePosFunc *func, int color, NoteType noteType) : hitTime{ hitTime }, endPos{ sf::Vector2f(0,0) }, func{ func }, color{ color }, noteType{ noteType }, holdStart{ nullptr }
 {
 	if (noteType == NoteType::HOLD_END)
 	{
@@ -11,7 +11,7 @@ Note::Note(int hitTime, NotePosFunc *func, int color, NoteType noteType) : hitTi
 	}
 		
 }
-Note::Note(int hitTime, NotePosFunc* func, int color, int holdNoteLength) : hitTime{ hitTime }, endPos{ sf::Vector2f(0,0) }, func{ func }, color{ color }, noteType{ NoteType::HOLD_END }, holdNoteLength{ holdNoteLength }
+Note::Note(int hitTime, NotePosFunc* func, int color, Note* holdStart) : hitTime{ hitTime }, endPos{ sf::Vector2f(0,0) }, func{ func }, color{ color }, noteType{ NoteType::HOLD_END }, holdStart{ holdStart }
 {}
 
 Note::~Note()
@@ -34,6 +34,13 @@ void Note::setEndPos(sf::Vector2f endPosIn)
 {
 	
 	endPos = endPosIn;
+}
+
+int Note::getHoldTime()
+{
+	if(holdStart == nullptr)
+		return 0;
+	return hitTime - holdStart->hitTime;
 }
 
 

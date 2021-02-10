@@ -18,8 +18,11 @@ public:
 	void renderNote(int time, sf::RenderWindow &window, sf::Vector2f position, sf::Vector2f prevPos, int colorId);
 	void prepareMiddleForSong(int amountOfColors);
 	void renderMiddle(int time, sf::RenderWindow &window, float rotation);
+	void renderHoldLine(int time, sf::RenderWindow& window, sf::Vector2f pos1, sf::Vector2f pos2, int colorId);
 	void showHitMark(HitType hitType);
 	float getMiddleRadius();
+	sf::Vector2f getNoteMiddle(sf::Vector2f pos, sf::Vector2f prevPos);
+	double degreeDistance;
 private:
 	std::vector<sf::Color> colors;
 	std::vector<sf::Color> hitMarkerColors;

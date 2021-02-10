@@ -25,13 +25,18 @@ void GameManager::LoadSong()
         delete loadedSong;
         loadedSong = nullptr;
     }
-        
-    SongData sd;
-    sd.dataPath = "C:/Users/Gustav/source/repos/RythmGame/Songs/TestSong/TestSong.txt";
-    songLoader.loadNotes(sd);
 
+    songsInMenu.push_back(SongData());
+    songsInMenu[0].songDir = "C:/Users/spp104/Documents/rhythm_game/Songs/TestSong/";
+    songsInMenu[0].songFileName = "TestSong.txt";
+    songLoader.loadNotes(songsInMenu[0]);
+
+    songLoader.loadGeneral(songsInMenu[0]);
   
-    loadedSong = new Song(sd.notes, 30, 100, 1000, skin);
+    loadedSong = new Song(songsInMenu[0].notes, 30, 100, 300, skin);
+    songsInMenu[0].music->setVolume(25);
+    //songsInMenu[0].music->play();
+
     
 }
 

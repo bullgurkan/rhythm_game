@@ -162,6 +162,7 @@
     <ClCompile Include="Note.cpp" />
     <ClCompile Include="Skin.cpp" />
     <ClCompile Include="Song.cpp" />
+    <ClCompile Include="SongData.cpp" />
     <ClCompile Include="SongLoader.cpp" />
   </ItemGroup>
   <ItemGroup>

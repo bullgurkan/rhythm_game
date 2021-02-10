@@ -14,7 +14,7 @@ void SongLoader::openFile(SongData& songData)
 	{
 		if (stream.is_open())
 			stream.close();
-		stream.open(songData.dataPath, std::ifstream::in);
+		stream.open(songData.songDir + songData.songFileName, std::ifstream::in);
 	}
 
 }
@@ -22,16 +22,20 @@ void SongLoader::openFile(SongData& songData)
 void SongLoader::loadGeneral(SongData& songData)
 {
 	openFile(songData);
+
+	songData.music = new sf::Music();
+	songData.image = new sf::Texture();
+
 	std::vector<std::pair<std::string, std::string>> data = loadTagData("General");
 	for (auto& line : data)
 	{
 		if (line.first == "AudioFilename")
 		{
-			songData.music.openFromFile(line.second);
+			songData.music->openFromFile(songData.songDir + line.second);
 		}
 		else if (line.first == "ImageFilename")
 		{
-			songData.image.loadFromFile(line.second);
+			songData.image->loadFromFile(songData.songDir + line.second);
 		}
 	}
 }
@@ -89,6 +93,7 @@ void SongLoader::loadNotes(SongData& songData)
 	openFile(songData);
 	std::string line;
 	bool foundTag = false;
+	std::map<int, Note*> holdNoteStarts;
 	while (std::getline(stream, line))
 	{
 		if (!foundTag)
@@ -118,19 +123,28 @@ void SongLoader::loadNotes(SongData& songData)
 
 				Note::NoteType noteType = (Note::NoteType)(line[index++]);
 				int noteHitTime = readInt(line, index);
+				int color = line[index++];
+				Note* note;
 				switch (noteType)
 				{
+				
+					
 				case Note::NoteType::PRESS:
-				case Note::NoteType::HOLD_START:
-					songData.notes.push_back(new Note(noteHitTime, func, line[index++], noteType));
+					note = new Note(noteHitTime, func, color, noteType);
 					break;
+				case Note::NoteType::HOLD_START:
+					note = new Note(noteHitTime, func, color, noteType);
+					holdNoteStarts.insert_or_assign(color, note);
+					break;
+
 				case Note::NoteType::HOLD_END:
-					//songData.notes.push_back(new Note(line[index++] - '0', func, line[index++] - '0', line[index++] - '0'));
+					note = new Note(noteHitTime, func, color, holdNoteStarts[color]);
 					break;
 				default:
 					break;
 				}
 
+				songData.notes.push_back(note);
 			}
 			else
 				break;
@@ -142,9 +156,9 @@ void SongLoader::loadNotes(SongData& songData)
 
 std::vector<std::pair<std::string, std::string>> SongLoader::loadTagData(std::string tagName)
 {
+	std::vector<std::pair<std::string, std::string>> tagData;
 	if (stream.is_open())
 	{
-		std::vector<std::pair<std::string, std::string>> tagData;
 		std::string line;
 		bool foundTag = false;
 		while (std::getline(stream, line))
@@ -163,7 +177,7 @@ std::vector<std::pair<std::string, std::string>> SongLoader::loadTagData(std::st
 					int index = (int)line.find_first_of(':');
 					if (index != -1)
 					{
-						tagData.push_back(std::pair<std::string, std::string>(line.substr(0, index), line.substr((long)index + 1)));
+						tagData.push_back(std::pair<std::string, std::string>(line.substr(0, index), line.substr(static_cast<long>(index) + 1)));
 					}
 
 				}
@@ -172,6 +186,7 @@ std::vector<std::pair<std::string, std::string>> SongLoader::loadTagData(std::st
 			}
 		}
 	}
+	return tagData;
 }
 
 
