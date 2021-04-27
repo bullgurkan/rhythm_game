@@ -141,6 +141,7 @@
       <PreprocessorDefinitions>SFML_STATIC;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)SFML\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -155,25 +156,36 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AutoPanel.cpp" />
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="KeyBind.cpp" />
     <ClCompile Include="LineNotePosFunc.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MenuManager.cpp" />
     <ClCompile Include="Note.cpp" />
+    <ClCompile Include="Panel.cpp" />
     <ClCompile Include="Skin.cpp" />
-    <ClCompile Include="Song.cpp" />
+    <ClCompile Include="SongPlayer.cpp" />
     <ClCompile Include="SongData.cpp" />
     <ClCompile Include="SongLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AutoPanel.hpp" />
+    <ClInclude Include="Button.hpp" />
     <ClInclude Include="GameManager.hpp" />
     <ClInclude Include="InputData.hpp" />
     <ClInclude Include="InputManager.hpp" />
+    <ClInclude Include="KeyBind.hpp" />
+    <ClInclude Include="KeyBindDefault.hpp" />
     <ClInclude Include="LineNotePosFunc.hpp" />
+    <ClInclude Include="MenuManager.hpp" />
     <ClInclude Include="Note.hpp" />
     <ClInclude Include="NotePosFunc.hpp" />
+    <ClInclude Include="Panel.hpp" />
     <ClInclude Include="Skin.hpp" />
-    <ClInclude Include="Song.hpp" />
+    <ClInclude Include="SongPlayer.hpp" />
     <ClInclude Include="SongData.hpp" />
     <ClInclude Include="SongLoader.hpp" />
   </ItemGroup>

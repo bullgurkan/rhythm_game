@@ -1,6 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Song.hpp"
+#include "SongPlayer.hpp"
 #include <chrono>
 #include "InputManager.hpp"
 #include "SongLoader.hpp"
@@ -16,8 +16,11 @@ public:
 private:
 	sf::RenderWindow window;
 	Skin skin;
-	Song *loadedSong;
+	SongPlayer *loadedSong;
+	SongData *loadedSongData;
 	InputManager input;
 	SongLoader songLoader;
 	std::vector<SongData> songsInMenu;
+	float playbackSpeed;
+	MenuManager menuManager;
 };

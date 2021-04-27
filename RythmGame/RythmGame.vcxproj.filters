@@ -13,66 +13,117 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\InGame">
+      <UniqueIdentifier>{65c4ffe3-14ae-42fd-9398-446034e9144c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Input">
+      <UniqueIdentifier>{da9eee3f-1e83-4ee5-ac03-a03a494a6496}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Menu">
+      <UniqueIdentifier>{a036cf81-02c6-4c0c-a433-8f053a5d82a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Menu">
+      <UniqueIdentifier>{1b3d56ee-ef95-45dc-8571-55865cb76f55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\InGame">
+      <UniqueIdentifier>{a8bcfcac-3434-44de-bc3e-c3d713edf718}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Input">
+      <UniqueIdentifier>{aa7b7aae-4035-4625-b51e-5ef16763adbd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Note.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Song.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Skin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="InputManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GameManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LineNotePosFunc.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="SongData.cpp">
+      <Filter>Source Files\Menu</Filter>
     </ClCompile>
     <ClCompile Include="SongLoader.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Menu</Filter>
     </ClCompile>
-    <ClCompile Include="SongData.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="SongPlayer.cpp">
+      <Filter>Source Files\InGame</Filter>
+    </ClCompile>
+    <ClCompile Include="Skin.cpp">
+      <Filter>Source Files\InGame</Filter>
+    </ClCompile>
+    <ClCompile Include="LineNotePosFunc.cpp">
+      <Filter>Source Files\InGame</Filter>
+    </ClCompile>
+    <ClCompile Include="Note.cpp">
+      <Filter>Source Files\InGame</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyBind.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuManager.cpp">
+      <Filter>Source Files\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="Panel.cpp">
+      <Filter>Source Files\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="AutoPanel.cpp">
+      <Filter>Source Files\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>Source Files\Menu</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Note.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Song.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Skin.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GameManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="InputManager.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="SongPlayer.hpp">
+      <Filter>Header Files\InGame</Filter>
     </ClInclude>
-    <ClInclude Include="InputData.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Skin.hpp">
+      <Filter>Header Files\InGame</Filter>
     </ClInclude>
     <ClInclude Include="NotePosFunc.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\InGame</Filter>
+    </ClInclude>
+    <ClInclude Include="Note.hpp">
+      <Filter>Header Files\InGame</Filter>
     </ClInclude>
     <ClInclude Include="LineNotePosFunc.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\InGame</Filter>
+    </ClInclude>
+    <ClInclude Include="InputData.hpp">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.hpp">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuManager.hpp">
+      <Filter>Header Files\Menu</Filter>
     </ClInclude>
     <ClInclude Include="SongLoader.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Menu</Filter>
     </ClInclude>
     <ClInclude Include="SongData.hpp">
+      <Filter>Header Files\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyBind.hpp">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Panel.hpp">
+      <Filter>Header Files\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoPanel.hpp">
+      <Filter>Header Files\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyBindDefault.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.hpp">
+      <Filter>Header Files\Menu</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -6,8 +6,8 @@ struct InputData
 public:
 	int time;
 	int colorToPop;
-	InputManager::InputType inputType;
+	KeyBind::KeyState keyState;
 
-	InputData(int time, int colorToPop, InputManager::InputType inputType) :time{ time }, colorToPop{ colorToPop }, inputType{ inputType } {};
+	InputData(int time, int colorToPop, KeyBind::KeyState keyState) :time{ time }, colorToPop{ colorToPop }, keyState{ keyState } {};
 
 };

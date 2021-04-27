@@ -1,4 +1,4 @@
-#include "Song.hpp"
+#include "SongPlayer.hpp"
 #include <stdlib.h>
 #include <iostream>
 #define _USE_MATH_DEFINES
@@ -7,22 +7,24 @@
 const sf::Vector2f zeroVector(0, 0);
 const int extraTimeAtSongEnd = 10;
 
-Song::Song(std::vector<Note*> notesIn, int perfectTime, int hitTime, int missTime, Skin& skin) : notes{ notesIn }, notesDefault{ notesIn }, perfectTime{ perfectTime }, hitTime{ hitTime }, missTime{ missTime }, skin{ skin }, inputs(), totalMissTimeInMs{ 0 }, endTime{ (notes.size() > 0) ? (*(--notes.end()))->hitTime + extraTimeAtSongEnd + missTime : 100000 }
+SongPlayer::SongPlayer(SongData* songData, int perfectTime, int hitTime, int missTime, Skin& skin) : songData{ songData }, notesDefault{ songData->notes }, perfectTime{ perfectTime }, hitTime{ hitTime }, missTime{ missTime }, skin{ skin }, inputs(), totalMissTimeInMs{ 0 }, endTime{ (notesDefault.size() > 0) ? (*(--notesDefault.end()))->hitTime + extraTimeAtSongEnd + missTime : 100000 }
 {
+	/*
 	int amountOfColors = 0;
 	for (Note* note : notes)
 	{
+		//std::cout << (int)note->noteType << std::endl;
 		if (note->color + 1 > amountOfColors)
 			amountOfColors = note->color + 1;
 	}
+	*/
 
 
+	skin.prepareMiddleForSong(songData->amountOfKeys);
 
-	skin.prepareMiddleForSong(amountOfColors);
-
-	if (amountOfColors == 1)
+	if (songData->amountOfKeys == 1)
 	{
-		std::srand(notesDefault[0]->hitTime);
+		std::srand(songData->notes[0]->hitTime);
 
 		for (Note* note : notesDefault)
 		{
@@ -41,7 +43,7 @@ Song::Song(std::vector<Note*> notesIn, int perfectTime, int hitTime, int missTim
 	notes = notesDefault;
 }
 
-Song::~Song()
+SongPlayer::~SongPlayer()
 {
 
 	for (Note* note : notesDefault)
@@ -49,9 +51,9 @@ Song::~Song()
 
 }
 
-void Song::render(int time, sf::RenderWindow& window)
+void SongPlayer::render(int time, sf::RenderWindow& window)
 {
-	skin.renderMiddle(time, window, 0);
+
 	std::vector<Note*>::iterator it = notes.begin();
 	while (it != notes.end())
 	{
@@ -66,13 +68,10 @@ void Song::render(int time, sf::RenderWindow& window)
 				}
 				else if (time > (*it)->holdStart->hitTime - 1000)
 				{
-					skin.renderHoldLine(time, window,
-						skin.getNoteMiddle(pos, (*it)->getPosition(time - 1, skin)),
-						skin.getNoteMiddle((*it)->holdStart->getPosition(time, skin), (*it)->holdStart->getPosition(time - 1, skin)),
-						(*it)->color);
+					skin.renderHoldLine(time, window, skin.getNoteMiddle(pos, (*it)->getPosition(time - 1, skin)), skin.getNoteMiddle((*it)->holdStart->getPosition(time, skin), (*it)->holdStart->getPosition(time - 1, skin)), (*it)->color);
 				}
 
-					
+
 
 			++it;
 		}
@@ -83,6 +82,8 @@ void Song::render(int time, sf::RenderWindow& window)
 		}
 	}
 
+	skin.renderMiddle(time, window, getMiddleRotation(time) == 0 ? 0 : static_cast<float>(360 - 180 / M_PI * getMiddleRotation(time)));
+
 	//could be in popNoteWithColor for preformace
 	clearOldNotesInPopBuffer(time);
 
@@ -91,13 +92,14 @@ void Song::render(int time, sf::RenderWindow& window)
 /**
 * pops the note with color color and returns how late the note was poped(this can be negative if it's too early)
 */
-void Song::popNoteWithColor(InputData inputData)
+void SongPlayer::popNoteWithColor(InputData inputData)
 {
 
-
+	std::cout << (int)inputData.keyState << std::endl;
 	//could be in render for animations
 	//clearOldNotesInPopBuffer(inputData.time);
 
+	skin.setColorPressed(inputData.keyState == KeyBind::KeyState::Pressed, inputData.colorToPop);
 
 	std::vector<Note*>::iterator it = nonPoppedNoteBuffer.begin();
 	while (it != nonPoppedNoteBuffer.end())
@@ -122,9 +124,9 @@ void Song::popNoteWithColor(InputData inputData)
 		if ((*it)->color == inputData.colorToPop)
 		{
 			int hitDelta = inputData.time - (*it)->hitTime;
-			switch (inputData.inputType)
+			switch (inputData.keyState)
 			{
-			case InputManager::InputType::PRESSED:
+			case KeyBind::KeyState::Pressed:
 
 				if (((*it)->noteType == Note::NoteType::HOLD_START || (*it)->noteType == Note::NoteType::PRESS) && hitDelta > -missTime)
 				{
@@ -132,13 +134,15 @@ void Song::popNoteWithColor(InputData inputData)
 					noteHitUpdate(hitDelta, inputData.colorToPop, (*it)->noteType);
 					return;
 				}
-			case InputManager::InputType::RELEASED:
+				break;
+			case KeyBind::KeyState::Released:
 				if ((*it)->noteType == Note::NoteType::HOLD_END && hitDelta > -(*it)->getHoldTime())
 				{
 					notes.erase(it);
 					noteHitUpdate(hitDelta, inputData.colorToPop, (*it)->noteType);
 					return;
 				}
+				break;
 			default:
 				break;
 			}
@@ -150,17 +154,24 @@ void Song::popNoteWithColor(InputData inputData)
 	}
 }
 
-bool Song::songHasEnded(int time)
+bool SongPlayer::songHasEnded(int time)
 {
 	return time >= endTime;
 }
 
-float Song::getAccuracy()
+float SongPlayer::getAccuracy()
 {
 	return 1 - (float)totalMissTimeInMs / (hitTime * notesDefault.size());
 }
 
-void Song::clearOldNotesInPopBuffer(int time)
+void SongPlayer::ReloadSong()
+{
+	notes = std::vector<Note*>(notesDefault);
+	nonPoppedNoteBuffer.clear();
+	inputs.clear();
+}
+
+void SongPlayer::clearOldNotesInPopBuffer(int time)
 {
 	std::vector<Note*>::iterator it = nonPoppedNoteBuffer.begin();
 	while (it != nonPoppedNoteBuffer.end() && time - (*it)->hitTime > missTime)
@@ -170,13 +181,13 @@ void Song::clearOldNotesInPopBuffer(int time)
 	}
 }
 
-void Song::noteHitUpdate(int hitDelta, int color, Note::NoteType noteType)
+void SongPlayer::noteHitUpdate(int hitDelta, int color, Note::NoteType noteType)
 {
 	if (hitDelta < -hitTime)
 	{
 		if (hitDelta < -missTime)
 			return;
-		//skin.showHitMark(Skin::HitType::EARLY_MISS);
+		skin.showHitMark(Skin::HitType::EARLY_MISS);
 		totalMissTimeInMs += hitTime;
 		if (noteType == Note::NoteType::HOLD_START)
 			onHoldStartMiss(color);
@@ -204,12 +215,12 @@ void Song::noteHitUpdate(int hitDelta, int color, Note::NoteType noteType)
 	}
 }
 
-void Song::onHoldStartMiss(int color)
+void SongPlayer::onHoldStartMiss(int color)
 {
 	std::vector<Note*>::iterator it = notes.begin();
 	while (it != notes.end())
 	{
-		std::cout << (*it)->color << std::endl;
+
 		if ((*it)->color == color && (*it)->noteType == Note::NoteType::HOLD_END)
 		{
 			notes.erase(it);
@@ -221,13 +232,13 @@ void Song::onHoldStartMiss(int color)
 	}
 }
 
-float Song::getMiddleRotation(int time)
+float SongPlayer::getMiddleRotation(int time)
 {
-	return 0.0f;
+	return static_cast<float>(static_cast<double>(time % 5000) / 5000 * 2 * M_PI);
 }
 
-sf::Vector2f Song::getMiddleColorPositionAtTime(int time, int color)
+sf::Vector2f SongPlayer::getMiddleColorPositionAtTime(int time, int color)
 {
 	float rotation = getMiddleRotation(time);
-	return sf::Vector2f(static_cast<float>(std::sin(rotation + skin.degreeDistance * (static_cast<double>(color) + 0.5f))), static_cast<float>(std::cos(rotation + skin.degreeDistance * (static_cast<double>(color) + 0.5f)))) * skin.getMiddleRadius();
+	return sf::Vector2f(static_cast<float>(std::sin(rotation + skin.angleBetweenColors * (static_cast<double>(color) + 0.5f))), static_cast<float>(std::cos(rotation + skin.angleBetweenColors * (static_cast<double>(color) + 0.5f)))) * skin.getMiddleRadius();
 }

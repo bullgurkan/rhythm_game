@@ -12,7 +12,9 @@ public:
 	void loadNotes(SongData& songData);
 private:
 	void openFile(SongData& songData);
-private:
+	void loadNotesFromOsuFile(SongData& songData, int speed);
+	void loadNotesFromSongFile(SongData& songData);
+
 	std::ifstream stream;
 	SongData* openSongData;
 	std::vector<std::pair<std::string, std::string>> loadTagData(std::string tagName);

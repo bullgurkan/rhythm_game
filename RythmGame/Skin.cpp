@@ -5,7 +5,7 @@
 #include <math.h>
 #include <iostream>
 
-Skin::Skin(float middleRadius, std::vector<sf::Color> colors, std::vector<sf::Color> hitMarkerColors, sf::Vector2f screenSize) : middleRadius{ middleRadius }, noteShape{ nullptr }, middleShapes(), middleHitMarkerShape{ nullptr }, colors{ colors }, hitMarkerColors{ hitMarkerColors }, screenCenter(screenSize.x / 2, screenSize.y / 2)
+Skin::Skin(float middleRadius, std::vector<sf::Color> colors, std::vector<sf::Color> hitMarkerColors, sf::Vector2f screenSize, sf::Color notPressedColorMult) : middleRadius{ middleRadius }, noteShape{ nullptr }, middleShapes(), middleHitMarkerShape{ nullptr }, colors{ colors }, hitMarkerColors{ hitMarkerColors }, notPressedColorMult{ notPressedColorMult }, screenCenter(screenSize.x / 2, screenSize.y / 2)
 {
 	sf::ConvexShape* noteShapeTri = new sf::ConvexShape(3);
 	noteShapeTri->setPoint(0, sf::Vector2f(0, 10));
@@ -14,7 +14,7 @@ Skin::Skin(float middleRadius, std::vector<sf::Color> colors, std::vector<sf::Co
 
 	noteShapeTri->setOrigin(sf::Vector2f(0, 10));
 
-	noteShapeTri->setOutlineColor(sf::Color::White);
+	//noteShapeTri->setOutlineColor(sf::Color::White);
 
 	noteShape = noteShapeTri;
 
@@ -67,16 +67,16 @@ void Skin::prepareMiddleForSong(int amountOfColors)
 	{
 		sf::ConvexShape* middleHitMarker = new sf::ConvexShape(amountOfColors);
 
-		degreeDistance = 2 * M_PI / amountOfColors;
-		float radiusForEdge = static_cast<float>(middleRadius / std::sin(degreeDistance / 2));
+		angleBetweenColors = 2 * M_PI / amountOfColors;
+		float radiusForEdge = static_cast<float>(middleRadius / std::sin(angleBetweenColors / 2));
 		for (int i = 0; i < amountOfColors; i++)
 		{
 			sf::ConvexShape* colorShape = new sf::ConvexShape(3);
 
 			colorShape->setPoint(0, sf::Vector2f(0, 0));
-			colorShape->setPoint(1, sf::Vector2f(static_cast<float>(std::sin(degreeDistance * i) * radiusForEdge), static_cast<float>(std::cos(degreeDistance * i) * radiusForEdge)));
-			colorShape->setPoint(2, sf::Vector2f((float)std::sin(degreeDistance * (static_cast<int64_t>(i) + 1)) * radiusForEdge, (float)std::cos(degreeDistance * (static_cast<int64_t>(i) + 1l)) * radiusForEdge));
-			colorShape->setFillColor(colors[i]);
+			colorShape->setPoint(1, sf::Vector2f(static_cast<float>(std::sin(angleBetweenColors * i) * radiusForEdge),static_cast<float>(std::cos(angleBetweenColors * i) * radiusForEdge)));
+			colorShape->setPoint(2, sf::Vector2f(static_cast<float>(std::sin(angleBetweenColors * (static_cast<int64_t>(i) + 1))) * radiusForEdge, static_cast<float>(std::cos(angleBetweenColors * (static_cast<int64_t>(i) + 1l)) * radiusForEdge)));
+			colorShape->setFillColor(colors[i] * notPressedColorMult);
 
 			colorShape->setPosition(screenCenter);
 			middleShapes.push_back(colorShape);
@@ -98,11 +98,12 @@ void Skin::prepareMiddleForSong(int amountOfColors)
 
 void Skin::renderMiddle(int time, sf::RenderWindow& window, float rotation)
 {
-
-	for (sf::Shape* shape : middleShapes)
+	for (int i = 0; i < middleShapes.size();i++)
 	{
-		window.draw(*shape);
+		middleShapes[i]->setRotation(rotation);
+		window.draw(*middleShapes[i]);
 	}
+	middleHitMarkerShape->setRotation(rotation);
 	window.draw(*middleHitMarkerShape);
 }
 
@@ -117,15 +118,18 @@ void Skin::renderHoldLine(int time, sf::RenderWindow& window, sf::Vector2f pos1,
 	line.setPoint(3, pos2 - normal * width);
 
 	line.setPosition(screenCenter);
-	//line.setFillColor(colors[colorId]);
+	line.setFillColor(colors[colorId]);
 	window.draw(line);
 }
 
 void Skin::showHitMark(HitType hitType)
 {
-	std::cout << (int)hitType << std::endl;
 	middleHitMarkerShape->setFillColor(hitMarkerColors[(int)hitType]);
+}
 
+void Skin::setColorPressed(bool held, int colorId) 
+{
+	middleShapes[colorId]->setFillColor(held ? colors[colorId] : colors[colorId] * notPressedColorMult);
 }
 
 float Skin::getMiddleRadius()
@@ -135,6 +139,8 @@ float Skin::getMiddleRadius()
 
 sf::Vector2f Skin::getNoteMiddle(sf::Vector2f pos, sf::Vector2f prevPos)
 {
-	float dist = std::atan2((prevPos - pos).y, (prevPos - pos).x);
-	return pos + sf::Vector2f(noteShape->getLocalBounds().width / dist, noteShape->getLocalBounds().height / dist);
+	sf::Vector2f delta = (prevPos - pos);
+	float dist = std::sqrt(delta.x * delta.x + delta.y * delta.y);
+	delta /= dist;
+	return pos + delta * (noteShape->getLocalBounds().width/2);
 }

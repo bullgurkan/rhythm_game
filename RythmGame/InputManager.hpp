@@ -1,21 +1,23 @@
 #pragma once
 #include <vector>
-#include <SFML/Window/Keyboard.hpp>
-class Song;
+#include <unordered_map>
+#include "KeyBind.hpp"
+#include "MenuManager.hpp"
+class SongPlayer;
 
 class InputManager
 {
 public:
-	InputManager();
-	void pollInputs(int time, Song &song);
-	enum class InputType
-	{
-		PRESSED,
-		RELEASED
-	};
+	InputManager(std::unordered_map<sf::Keyboard::Key, KeyBind> keyBinds, std::unordered_map<sf::Mouse::Button, KeyBind> mouseButtonBinds);
+	void executeInputEvent(int time, SongPlayer* song, MenuManager& menuManager, sf::Event e);
+
 
 private:
-	std::vector<sf::Keyboard::Key> keyBinds;
-	std::vector<bool> keyPressed;
+	void executeAction(int time, SongPlayer* song, MenuManager& menuManager, KeyBind::KeyAction action, KeyBind& keyBind, KeyBind::KeyState keyState);
+
+	//std::vector<std::vector<KeyBind>> inGameKeyBinds;
+	std::unordered_map<sf::Keyboard::Key, KeyBind> keyBinds;
+	std::unordered_map<sf::Mouse::Button, KeyBind> mouseButtonBinds;
+	//std::vector<bool> inGameKeysPressed;
 	
 };

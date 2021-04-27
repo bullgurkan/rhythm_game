@@ -1,0 +1,23 @@
+improve gameplay clarity (I will have to play the game more and thus this has to be done later, even though it has the highest priority) ?d (depends on the amount of fixes needed)
+post game screen 1d
+song select 2d
+scoreboard 1d
+hit effects(I personaly dislike them when playing and thus they are this low but I know may other people like them (and it looks cool for spectators)) 1d
+replay system 2d
+improved post game screen with a graph for note deviation(this is connected to the replay system and will thus be made after, but needs to be taken in consideration when making replays) 2d
+beat map editor 3d
+main menu/options menu 1d
+difficulty calculator 2d
+more beat map options (allow for more complicated changes in middle spin and note trajectory) 1d
+skin file 1d
+rough song beat map generator (used as a base for beatmasp so I can get a couple songs going) 1d
+optimize for performace if neccesary(this will be done along the way if it's too bad but I will put in some extra effort and make some tests here to make sure it's smooth) ?d
+skin editor 2d (can prob reuse things from the beat map editor)
+online scoreboard(not too hard but renting a server(or setting one up in the basement :3) seems a bit overkill before I can get anyone to play the game) 3d (setting up the networking will take time)
+online song downloading (sense it's downloading I will prob use a separate host for that) 2d (again prob not difficult but setting up networking takes time)
+generate beat map from song using ai 4d (this will be difficult and is thus last)
+
+work progress:
+1:32 prepared to make a menu system
+4:4  started reworking the input system to use the event system in SFML.
+4:49 input system now workin, menu panels ready to be mades
