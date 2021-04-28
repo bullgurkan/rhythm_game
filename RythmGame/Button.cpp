@@ -1,10 +1,15 @@
 #include "Button.hpp"
 #include <iostream>
 
-Button::Button(sf::Vector2i posRelativeToParent, sf::Vector2i size, Panel* parent, sf::Color colors[2], std::string text) : Panel(posRelativeToParent, parent, true), size{ size }, onClickFunc{ nullptr }, colors()
+Button::Button(sf::Vector2i posRelativeToParent, sf::Vector2i size, Panel* parent, sf::Color colors[2], std::string text, sf::Font &font, std::function<void()> onClickFunc) : Panel(posRelativeToParent, parent, true), size{ size }, onClickFunc{ onClickFunc }, colors()
 {
+	
 	for (size_t i = 0; i < 2; i++)
 		this->colors[i] = colors[i];
+	shape.setSize(static_cast<sf::Vector2f>(size));
+	this->text.setString(text);
+	this->text.setFont(font);
+	this->text.setFillColor(sf::Color::Magenta);
 }
 
 Panel* Button::getSubPanelInDirection(Direciton dir, sf::Vector2i posRelativeToThis)
@@ -14,22 +19,26 @@ Panel* Button::getSubPanelInDirection(Direciton dir, sf::Vector2i posRelativeToT
 
 void Button::render(int time, sf::RenderWindow& window, Skin& skin)
 {
+
 	
-	shape.setSize(static_cast<sf::Vector2f>(size));
 	shape.setFillColor(colors[selected ? 1 : 0]);
 
-	sf::Vector2f acutalPos;
-	if(parent != nullptr)
-		acutalPos = static_cast<sf::Vector2f>(parent->pos + pos);
+	//should prob be cached(and updated when parent or panel is moved)
+	sf::Vector2f actualPos;
+	if (parent != nullptr)
+		actualPos = static_cast<sf::Vector2f>(parent->pos + pos);
 	else
-		acutalPos = static_cast<sf::Vector2f>(pos);
-	shape.setPosition(acutalPos);
+		actualPos = static_cast<sf::Vector2f>(pos);
+	shape.setPosition(actualPos);
+	text.setPosition(actualPos);
+
 	window.draw(shape);
+	window.draw(text);
 }
 
 void Button::onClick()
 {
-	if (onClickFunc != nullptr)
+	if(onClickFunc != nullptr)
 		onClickFunc();
 }
 

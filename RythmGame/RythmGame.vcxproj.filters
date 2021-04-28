@@ -125,5 +125,8 @@
     <ClInclude Include="Button.hpp">
       <Filter>Header Files\Menu</Filter>
     </ClInclude>
+    <ClInclude Include="SceneDefaults.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,26 +1,26 @@
 #include "GameManager.hpp"
 #include "LineNotePosFunc.hpp"
-#include <iostream>
-#include "KeyBindDefault.hpp"
 #include "AutoPanel.hpp"
 #include "Button.hpp"
+#include <iostream>
+
+#include "KeyBindDefault.hpp"
+#include "SceneDefaults.hpp"
 
 
 const sf::Vector2f screenSize(1920, 1080);
 const std::vector<sf::Color> defaultNoteColors = { sf::Color(255, 0, 102), sf::Color::Green, sf::Color(128, 0, 255), sf::Color::Cyan };
 const std::vector<sf::Color> defaultHitColors = { sf::Color::Red, sf::Color(255,140,0), sf::Color::White, sf::Color(0, 191, 255), sf::Color::Blue };
 
-
+const std::string pathBase = "C:/Users/spp104/source/repos/RythmGame/x64/Release/";
 
 GameManager::GameManager() : skin(30, defaultNoteColors, defaultHitColors, screenSize, sf::Color(255, 255, 255, 150)), window(sf::VideoMode((unsigned int)screenSize.x, (unsigned int)screenSize.y), "Rhythm Game"), loadedSong{ nullptr }, input(keyBinds, mouseButtonBinds), loadedSongData{ nullptr }, playbackSpeed{ 1 }, menuManager()
 {
 	window.setKeyRepeatEnabled(false);
-	AutoPanel* root = new AutoPanel(sf::Vector2i(0, 0), sf::Vector2i(100, 100), nullptr);
-	sf::Color buttonColors[2] = { sf::Color::Cyan, sf::Color::White };
-	root->addSubPanel(new Button(sf::Vector2i(100, 100), sf::Vector2i(100, 100), root, buttonColors, "text"));
-	root->addSubPanel(new Button(sf::Vector2i(300, 100), sf::Vector2i(100, 100), root, buttonColors, "text"));
-	menuManager.assignScene(MenuManager::Scene::MAIN_MENU, root);
-	menuManager.setActiveScene(MenuManager::Scene::MAIN_MENU);
+	font.loadFromFile("Fonts/good_times_rg.ttf");
+	GenerateScenes(menuManager, font);
+	menuManager.setActiveScene(MenuManager::Scene::SONG_SELECT);
+
 }
 
 GameManager::~GameManager()
@@ -41,7 +41,7 @@ void GameManager::LoadSong()
 	}
 
 	songsInMenu.push_back(SongData());
-	songsInMenu[0].songDir = "C:/Users/Gustav/source/repos/RythmGame/x64/Release/Songs/TestSong/";
+	songsInMenu[0].songDir = pathBase+"Songs/TestSong/";
 	songsInMenu[0].songFileName = "TestSong.txt";
 	songLoader.loadMetadata(songsInMenu[0]);
 
@@ -114,6 +114,7 @@ void GameManager::Start()
 
 			menuManager.render(time, window, skin);
 			window.display();
+			window.clear();
 		}
 	}
 }

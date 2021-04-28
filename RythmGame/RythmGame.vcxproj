@@ -184,6 +184,7 @@
     <ClInclude Include="Note.hpp" />
     <ClInclude Include="NotePosFunc.hpp" />
     <ClInclude Include="Panel.hpp" />
+    <ClInclude Include="SceneDefaults.hpp" />
     <ClInclude Include="Skin.hpp" />
     <ClInclude Include="SongPlayer.hpp" />
     <ClInclude Include="SongData.hpp" />

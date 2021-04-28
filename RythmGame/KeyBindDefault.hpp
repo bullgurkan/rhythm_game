@@ -148,6 +148,28 @@ const std::unordered_map<sf::Keyboard::Key, KeyBind> keyBinds = std::unordered_m
 				nullptr
 			)
 		),
+	std::pair<sf::Keyboard::Key, KeyBind>
+		(
+			sf::Keyboard::Key::Space,
+			KeyBind(
+				std::vector<KeyBind::KeyAction>
+				(
+					{ KeyBind::KeyAction::Click }
+				),
+				nullptr
+			)
+		),
+		std::pair<sf::Keyboard::Key, KeyBind>
+		(
+			sf::Keyboard::Key::Enter,
+			KeyBind(
+				std::vector<KeyBind::KeyAction>
+				(
+					{ KeyBind::KeyAction::Click }
+					),
+				nullptr
+			)
+		)
 	});
 
 const std::unordered_map<sf::Mouse::Button, KeyBind> mouseButtonBinds = std::unordered_map<sf::Mouse::Button, KeyBind>({ std::pair<sf::Mouse::Button, KeyBind>(sf::Mouse::Button::Left, KeyBind({KeyBind::KeyAction::Click}, nullptr)) });

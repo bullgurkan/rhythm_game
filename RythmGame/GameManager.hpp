@@ -23,4 +23,5 @@ private:
 	std::vector<SongData> songsInMenu;
 	float playbackSpeed;
 	MenuManager menuManager;
+	sf::Font font;
 };
