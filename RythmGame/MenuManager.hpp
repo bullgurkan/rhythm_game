@@ -12,7 +12,8 @@ public:
 	{
 		MAIN_MENU,
 		SONG_SELECT,
-		IN_GAME
+		IN_GAME,
+		POST_GAME
 	};
 	
 	void render(int time, sf::RenderWindow& window, Skin &skin);

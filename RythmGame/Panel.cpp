@@ -3,6 +3,11 @@
 Panel::Panel(sf::Vector2i posRelativeToParent, Panel* parent, bool interactable) : pos{ posRelativeToParent }, parent{ parent }, interactable{ interactable }
 {}
 
+Panel* Panel::getSubPanelInDirection(Direciton dir, sf::Vector2i posRelativeToThis)
+{
+	return nullptr;
+}
+
 void Panel::onBack()
 {
 	parent->onBack();

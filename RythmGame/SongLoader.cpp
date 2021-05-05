@@ -46,9 +46,12 @@ void SongLoader::loadMetadata(SongData& songData)
 	if (songData.metadata.size() > 0)
 		return;
 	openFile(songData);
+
 	std::vector<std::pair<std::string, std::string>> data = loadTagData("Metadata");
 	for (auto& line : data)
 		songData.metadata.insert(line);
+	
+		
 
 	openFile(songData);
 	//This should be REPLACED with a check or osu key count

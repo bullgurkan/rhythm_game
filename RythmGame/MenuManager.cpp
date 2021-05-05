@@ -67,7 +67,6 @@ void MenuManager::textEntered(int unicode)
 
 void MenuManager::setActiveScene(Scene scene)
 {
-	std::cout << (int)scene << std::endl;
 	auto sceneSearch = loadedScenes.find(scene);
 	if (sceneSearch != loadedScenes.end())
 	{

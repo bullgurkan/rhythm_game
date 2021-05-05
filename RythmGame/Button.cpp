@@ -30,7 +30,8 @@ void Button::render(int time, sf::RenderWindow& window, Skin& skin)
 	else
 		actualPos = static_cast<sf::Vector2f>(pos);
 	shape.setPosition(actualPos);
-	text.setPosition(actualPos);
+	
+	text.setPosition(actualPos + (sf::Vector2f(shape.getGlobalBounds().width, shape.getGlobalBounds().height) - sf::Vector2f(text.getGlobalBounds().width, text.getGlobalBounds().height * 2)) / static_cast<float>(2));
 
 	window.draw(shape);
 	window.draw(text);

@@ -10,5 +10,6 @@ SongData::~SongData()
 		delete musicData;
 	}
 		
-
+	for (auto note : notes)
+		delete note;
 }

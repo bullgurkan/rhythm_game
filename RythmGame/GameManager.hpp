@@ -10,18 +10,20 @@ class GameManager
 public:
 	GameManager();
 	~GameManager();
-	void LoadSong();
+	void LoadSong(SongData* selectedSongData);
 	void Start();
 
+	std::vector<SongData> songs;
+	SongLoader songLoader;
 private:
 	sf::RenderWindow window;
 	Skin skin;
-	SongPlayer *loadedSong;
-	SongData *loadedSongData;
+	SongPlayer *songPlayer;
+	SongData* selectedSongData;
+
 	InputManager input;
-	SongLoader songLoader;
-	std::vector<SongData> songsInMenu;
 	float playbackSpeed;
 	MenuManager menuManager;
 	sf::Font font;
+
 };

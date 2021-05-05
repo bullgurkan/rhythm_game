@@ -12,6 +12,7 @@ more beat map options (allow for more complicated changes in middle spin and not
 skin file 1d
 rough song beat map generator (used as a base for beatmasp so I can get a couple songs going) 1d
 optimize for performace if neccesary(this will be done along the way if it's too bad but I will put in some extra effort and make some tests here to make sure it's smooth) ?d
+async file loading ?d
 skin editor 2d (can prob reuse things from the beat map editor)
 online scoreboard(not too hard but renting a server(or setting one up in the basement :3) seems a bit overkill before I can get anyone to play the game) 3d (setting up the networking will take time)
 online song downloading (sense it's downloading I will prob use a separate host for that) 2d (again prob not difficult but setting up networking takes time)
@@ -21,3 +22,4 @@ work progress:
 1:32 prepared to make a menu system
 4:4  started reworking the input system to use the event system in SFML.
 4:49 input system now workin, menu panels ready to be mades
+31 ?

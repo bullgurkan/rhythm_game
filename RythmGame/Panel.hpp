@@ -15,7 +15,7 @@ public:
 	};
 
 	Panel(sf::Vector2i posRelativeToParent, Panel* parent, bool interactable);
-	virtual Panel* getSubPanelInDirection(Direciton dir, sf::Vector2i posRelativeToThis) = 0;
+	virtual Panel* getSubPanelInDirection(Direciton dir, sf::Vector2i posRelativeToThis);
 	virtual Panel* getHoveredPanel(sf::Vector2i posRelativeToParent);
 	virtual Panel* getDefaultSelectedPanel();
 	virtual void render(int time, sf::RenderWindow& window, Skin &skin) = 0;

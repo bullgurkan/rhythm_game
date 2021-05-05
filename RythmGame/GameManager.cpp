@@ -3,6 +3,7 @@
 #include "AutoPanel.hpp"
 #include "Button.hpp"
 #include <iostream>
+#include <filesystem>
 
 #include "KeyBindDefault.hpp"
 #include "SceneDefaults.hpp"
@@ -12,32 +13,66 @@ const sf::Vector2f screenSize(1920, 1080);
 const std::vector<sf::Color> defaultNoteColors = { sf::Color(255, 0, 102), sf::Color::Green, sf::Color(128, 0, 255), sf::Color::Cyan };
 const std::vector<sf::Color> defaultHitColors = { sf::Color::Red, sf::Color(255,140,0), sf::Color::White, sf::Color(0, 191, 255), sf::Color::Blue };
 
-const std::string pathBase = "C:/Users/spp104/source/repos/RythmGame/x64/Release/";
+const std::string pathBase = "C:/Users/Gustav/source/repos/RythmGame/x64/Release/";
 
-GameManager::GameManager() : skin(30, defaultNoteColors, defaultHitColors, screenSize, sf::Color(255, 255, 255, 150)), window(sf::VideoMode((unsigned int)screenSize.x, (unsigned int)screenSize.y), "Rhythm Game"), loadedSong{ nullptr }, input(keyBinds, mouseButtonBinds), loadedSongData{ nullptr }, playbackSpeed{ 1 }, menuManager()
+GameManager::GameManager() : skin(30, defaultNoteColors, defaultHitColors, screenSize, sf::Color(255, 255, 255, 150)), window(sf::VideoMode((unsigned int)screenSize.x, (unsigned int)screenSize.y), "Rhythm Game"), songPlayer{ nullptr }, input(keyBinds, mouseButtonBinds), selectedSongData{ nullptr }, playbackSpeed{ 1 }, menuManager()
 {
 	window.setKeyRepeatEnabled(false);
-	font.loadFromFile("Fonts/good_times_rg.ttf");
-	GenerateScenes(menuManager, font);
+	font.loadFromFile(pathBase +"Fonts/good_times_rg.ttf");
+	for (const auto& entry : std::filesystem::directory_iterator(pathBase + "Songs"))
+	{
+		if (entry.is_directory())
+		{
+			for (const auto& songEntry : std::filesystem::directory_iterator(entry.path()))
+			{
+				if (songEntry.is_regular_file())
+				{
+					int index = static_cast<int>(songEntry.path().filename().string().find("."));
+					if (index != -1)
+					{
+						std::string songFileType = songEntry.path().string().substr(index);
+						if (songFileType.find("song") != -1 || songFileType.find("osu") != -1)
+						{
+							songs.push_back(SongData());
+							songs[songs.size() - 1].songDir = entry.path().string() + "/";
+							songs[songs.size() - 1].songFileName = songEntry.path().filename().string();
+							songLoader.loadMetadata(songs[songs.size() - 1]);
+						}
+					}
+				}
+
+			}
+		}
+		
+	}
+
+	for (auto& e : songs)
+	{
+		std::cout << e.songDir << std::endl;
+	}
+		
+
+	GenerateScenes(menuManager, font, *this);
 	menuManager.setActiveScene(MenuManager::Scene::SONG_SELECT);
+
 
 }
 
 GameManager::~GameManager()
 {
-	if (loadedSong != nullptr)
-		delete loadedSong;
+	if (songPlayer != nullptr)
+		delete songPlayer;
 }
 
-void GameManager::LoadSong()
+void GameManager::LoadSong(SongData* selectedSongData)
 {
 
 
-
-	if (loadedSong != nullptr)
+	/*
+	if (songPlayer != nullptr)
 	{
-		delete loadedSong;
-		loadedSong = nullptr;
+		delete songPlayer;
+		songPlayer = nullptr;
 	}
 
 	songsInMenu.push_back(SongData());
@@ -50,15 +85,15 @@ void GameManager::LoadSong()
 	songLoader.loadGeneral(songsInMenu[0]);
 	songLoader.loadNotes(songsInMenu[0]);
 
-	loadedSong = new SongPlayer(&songsInMenu[0], 30, 100, 300, skin);
-	loadedSongData = &songsInMenu[0];
-
+	songPlayer = new SongPlayer(&songsInMenu[0], 30, 100, 300, skin);
+	selectedSongData = &songsInMenu[0];
+	*/
 	//move to option file and or modifier
 	//playbackSpeed = std::stof(loadedSongData->metadata["Speed"]);
-	playbackSpeed = 5;
+	playbackSpeed = 1;
 
-	loadedSongData->music->setVolume(25);
-	loadedSongData->music->setPitch(playbackSpeed);
+	selectedSongData->music->setVolume(25);
+	selectedSongData->music->setPitch(playbackSpeed);
 
 }
 
@@ -80,7 +115,7 @@ void GameManager::Start()
 				window.close();
 				return;
 			}
-			input.executeInputEvent(static_cast<int>(time * playbackSpeed), (loadedSong != nullptr && !loadedSong->songHasEnded(static_cast<int>(time * playbackSpeed))) ? loadedSong : nullptr, menuManager, event);
+			input.executeInputEvent(static_cast<int>(time * playbackSpeed), (songPlayer != nullptr && !songPlayer->songHasEnded(static_cast<int>(time * playbackSpeed))) ? songPlayer : nullptr, menuManager, event);
 
 		}
 		currentTime = (long)std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
@@ -89,24 +124,24 @@ void GameManager::Start()
 			time += (currentTime - lastTime);
 			lastTime = currentTime;
 
-			if (!hasPrintedAcc && loadedSong != nullptr && !loadedSong->songHasEnded(static_cast<int>(time * playbackSpeed)))
+			if (!hasPrintedAcc && songPlayer != nullptr && !songPlayer->songHasEnded(static_cast<int>(time * playbackSpeed)))
 			{
-				if (time > 0 && loadedSongData->music->getStatus() != sf::Music::Playing)
+				if (time > 0 && selectedSongData->music->getStatus() != sf::Music::Playing)
 				{
-					loadedSongData->music->play();
-					loadedSongData->music->setPlayingOffset(sf::milliseconds(static_cast<int>(time * playbackSpeed)));
+					selectedSongData->music->play();
+					selectedSongData->music->setPlayingOffset(sf::milliseconds(static_cast<int>(time * playbackSpeed)));
 				}
 
 
 				window.clear();
-				loadedSong->render(static_cast<int>(time * playbackSpeed), window);
+				songPlayer->render(static_cast<int>(time * playbackSpeed), window);
 			}
 			else
 			{
 				if (!hasPrintedAcc)
 				{
-					if (loadedSong != nullptr)
-						std::cout << loadedSong->getAccuracy() * 100 << "%" << std::endl;
+					if (songPlayer != nullptr)
+						std::cout << songPlayer->getAccuracy() * 100 << "%" << std::endl;
 					hasPrintedAcc = true;
 				}
 

@@ -75,6 +75,12 @@
     <ClCompile Include="Button.cpp">
       <Filter>Source Files\Menu</Filter>
     </ClCompile>
+    <ClCompile Include="SongList.cpp">
+      <Filter>Source Files\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="SongDataPanel.cpp">
+      <Filter>Source Files\Menu</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameManager.hpp">
@@ -127,6 +133,12 @@
     </ClInclude>
     <ClInclude Include="SceneDefaults.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SongList.hpp">
+      <Filter>Header Files\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="SongDataPanel.hpp">
+      <Filter>Header Files\Menu</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
