@@ -34,5 +34,6 @@ void GenerateScenes(MenuManager &menuManager, sf::Font &font, GameManager &gm)
 	
 	menuManager.assignScene(MenuManager::Scene::SONG_SELECT, root);
 
+	menuManager.assignScene(MenuManager::Scene::IN_GAME, new AutoPanel(sf::Vector2i(0, 0), sf::Vector2i(0, 0), nullptr, true));
 
 }

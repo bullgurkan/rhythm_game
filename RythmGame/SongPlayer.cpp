@@ -156,6 +156,7 @@ void SongPlayer::popNoteWithColor(InputData inputData)
 
 bool SongPlayer::songHasEnded(int time)
 {
+	//std::cout << time << " "<< endTime << std::endl;
 	return time >= endTime;
 }
 

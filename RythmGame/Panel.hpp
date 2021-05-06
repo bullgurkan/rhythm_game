@@ -21,7 +21,7 @@ public:
 	virtual void render(int time, sf::RenderWindow& window, Skin &skin) = 0;
 	virtual void onClick() = 0;
 	virtual void onBack();
-	Panel* getPanelInDirection(Direciton dir);
+	virtual Panel* getPanelInDirection(Direciton dir);
 	sf::Vector2i pos;
 	bool interactable;
 	bool selected;

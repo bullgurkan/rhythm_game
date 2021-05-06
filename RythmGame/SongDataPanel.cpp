@@ -40,12 +40,18 @@ void SongDataPanel::setSongData(SongData* songData)
 	this->songData = songData;
 	imageDisplay.setTexture(songData->image);
 
-	auto metadataSearch = songData->metadata.find("Title");
+	auto metadataSearch = songData->metadata.find(L"Title");
+	
 
 	if (metadataSearch != songData->metadata.end())
 		nameDisplay.setString(metadataSearch->second);
 		
 
+}
+
+SongData* SongDataPanel::getSongData()
+{
+	return songData;
 }
 
 void SongDataPanel::unloadSongData()

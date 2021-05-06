@@ -9,9 +9,9 @@ public:
 	sf::Texture *image;
 	sf::Sound *music;
 	sf::SoundBuffer *musicData;
-	std::map<std::string, std::string> metadata;
-	std::string songDir;
-	std::string songFileName;
+	std::map<std::wstring, std::wstring> metadata;
+	std::wstring songDir;
+	std::wstring songFileName;
 	std::vector<Note*> notes;
 	int difficulty;
 	int amountOfKeys;

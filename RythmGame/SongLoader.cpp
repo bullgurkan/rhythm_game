@@ -3,6 +3,8 @@
 #include "LineNotePosFunc.hpp"
 #include <iostream>
 
+int osu_default_note_speed = 1000;
+
 SongLoader::~SongLoader()
 {
 	stream.close();
@@ -14,7 +16,7 @@ void SongLoader::openFile(SongData& songData)
 	{
 		if (stream.is_open())
 			stream.close();
-		stream.open(songData.songDir + songData.songFileName, std::ifstream::in);
+		stream.open(songData.songDir + songData.songFileName, std::wifstream::in);
 	}
 
 }
@@ -27,19 +29,66 @@ void SongLoader::loadGeneral(SongData& songData)
 	songData.musicData = new sf::SoundBuffer();
 	songData.image = new sf::Texture();
 
-	std::vector<std::pair<std::string, std::string>> data = loadTagData("General");
+	std::vector<std::pair<std::wstring, std::wstring>> data = loadTagData(L"General");
 	for (auto& line : data)
 	{
-		if (line.first == "AudioFilename")
+		if (line.first == L"AudioFilename")
 		{
-			songData.musicData->loadFromFile(songData.songDir + line.second);
-			songData.music->setBuffer(*songData.musicData);
+			std::wstring fileName = line.second;
+
+			if (line.second.find_first_not_of(' ') != -1)
+			{
+				std::vector<char> buffer;
+				std::ifstream tempStream = std::ifstream(songData.songDir + line.second.substr(line.second.find_first_not_of(' ')), std::ifstream::binary);
+				if (tempStream.is_open())
+				{
+
+					tempStream.seekg(0, tempStream.end);
+					const auto length = tempStream.tellg();
+					if (!length)
+						return;
+					buffer.resize(length);
+					tempStream.seekg(0, tempStream.beg);
+					
+
+					auto start = &*buffer.begin();
+					tempStream.read(start, length);
+					tempStream.close();
+					
+					
+					
+					songData.musicData->loadFromMemory(&buffer[0], buffer.size() * sizeof(char));
+					//songData.musicData->loadFromFile("C/Users/spp104/Documents/rhythm_game/x64/Release/Songs/(aperson)Tranzport/15._(Arkitech)_Tranzport.mp3");
+					songData.music->setBuffer(*songData.musicData);
+					std::cout << songData.music->getBuffer()->getDuration().asSeconds() << std::endl;
+				}
+			}
+
+
 		}
-		else if (line.first == "ImageFilename")
+		else if (line.first == L"ImageFilename")
 		{
-			songData.image->loadFromFile(songData.songDir + line.second);
+			if (line.second.find_first_not_of(' ') != -1)
+			{
+				std::vector<char> buffer;
+				std::ifstream tempStream = std::ifstream(songData.songDir + line.second.substr(line.second.find_first_not_of(' ')), std::ifstream::binary);
+				if (tempStream.is_open())
+				{
+					tempStream.seekg(0, tempStream.end);
+					const auto length = tempStream.tellg();
+					if (!length)
+						return;
+					buffer.resize(length);
+					tempStream.seekg(0, tempStream.beg);
+					auto start = &*buffer.begin();
+					tempStream.read(start, length);
+					tempStream.close();
+					songData.image->loadFromMemory(&buffer[0], buffer.size() * sizeof(char));
+				}
+			}
 		}
 	}
+
 }
 void SongLoader::loadMetadata(SongData& songData)
 {
@@ -47,33 +96,36 @@ void SongLoader::loadMetadata(SongData& songData)
 		return;
 	openFile(songData);
 
-	std::vector<std::pair<std::string, std::string>> data = loadTagData("Metadata");
+	std::vector<std::pair<std::wstring, std::wstring>> data = loadTagData(L"Metadata");
 	for (auto& line : data)
+	{
 		songData.metadata.insert(line);
-	
-		
+	}
 
-	openFile(songData);
+
+
+	stream.seekg(0, stream.beg);
+
 	//This should be REPLACED with a check or osu key count
-	std::string line;
-	std::getline(stream,  line);
-	if (line.find("osu") != std::string::npos)
-		songData.metadata.insert(std::pair<std::string, std::string>("Keys", "4"));
+	std::wstring line;
+	std::getline(stream, line);
+	if (line.find(L"osu") != std::string::npos)
+		songData.metadata.insert(std::pair<std::wstring, std::wstring>(L"Keys", L"4"));
 
-	auto keyTagSearch = songData.metadata.find("Keys");
-	if(keyTagSearch != songData.metadata.end())
+	auto keyTagSearch = songData.metadata.find(L"Keys");
+	if (keyTagSearch != songData.metadata.end())
 		songData.amountOfKeys = std::stoi(keyTagSearch->second);
 }
 void SongLoader::loadDifficulty(SongData& songData)
 {
 	openFile(songData);
-	std::vector<std::pair<std::string, std::string>> data = loadTagData("Difficulty");
+	std::vector<std::pair<std::wstring, std::wstring>> data = loadTagData(L"Difficulty");
 	for (auto& line : data)
-		if (line.first == "Difficulty")
+		if (line.first == L"Difficulty")
 			songData.difficulty = std::stoi(line.second);
 }
 
-bool lineHasTag(std::string& line, std::string tagName)
+bool lineHasTag(std::wstring& line, std::wstring tagName)
 {
 	if (line[0] == '[')
 	{
@@ -83,7 +135,7 @@ bool lineHasTag(std::string& line, std::string tagName)
 		if (index != -1)
 		{
 
-			if (tagName == "")
+			if (tagName == L"")
 				return true;
 			else
 				return line.substr(1, index - 1) == tagName;
@@ -95,7 +147,7 @@ bool lineHasTag(std::string& line, std::string tagName)
 
 }
 
-int readInt(std::string& line, int& index)
+int readInt(std::wstring& line, int& index)
 {
 	return static_cast<unsigned int>(line[index++]) << 8 | static_cast<unsigned int>(line[index++]);
 }
@@ -106,13 +158,13 @@ void SongLoader::loadNotes(SongData& songData)
 	if (songData.notes.size() > 0)
 		return;
 	openFile(songData);
-	std::string line;
+	std::wstring line;
 
 	std::getline(stream, line);
-	if (line.find("osu") != std::string::npos)
+	if (line.find(L"osu") != std::string::npos)
 	{
 		std::getline(stream, line);
-		loadNotesFromOsuFile(songData, std::stoi(line));
+		loadNotesFromOsuFile(songData, osu_default_note_speed);
 	}
 	else
 		loadNotesFromSongFile(songData);
@@ -120,15 +172,18 @@ void SongLoader::loadNotes(SongData& songData)
 
 
 
-std::vector<std::pair<std::string, std::string>> SongLoader::loadTagData(std::string tagName)
+std::vector<std::pair<std::wstring, std::wstring>> SongLoader::loadTagData(std::wstring tagName)
 {
-	std::vector<std::pair<std::string, std::string>> tagData;
+
+	std::vector<std::pair<std::wstring, std::wstring>> tagData;
 	if (stream.is_open())
 	{
-		std::string line;
+		std::wstring line;
 		bool foundTag = false;
+
 		while (std::getline(stream, line))
 		{
+
 			if (!foundTag)
 			{
 				if (lineHasTag(line, tagName))
@@ -136,14 +191,14 @@ std::vector<std::pair<std::string, std::string>> SongLoader::loadTagData(std::st
 			}
 			else
 			{
-				if (!lineHasTag(line, ""))
+				if (!lineHasTag(line, L""))
 				{
-					if (line.find_first_of("//") == 0)
+					if (line.find_first_of(L"//") == 0)
 						continue;
 					int index = (int)line.find_first_of(':');
 					if (index != -1)
 					{
-						tagData.push_back(std::pair<std::string, std::string>(line.substr(0, index), line.substr(static_cast<long>(index) + 1)));
+						tagData.push_back(std::pair<std::wstring, std::wstring>(line.substr(0, index), line.substr(1 + static_cast<long>(index))));
 					}
 
 				}
@@ -157,21 +212,21 @@ std::vector<std::pair<std::string, std::string>> SongLoader::loadTagData(std::st
 
 void SongLoader::loadNotesFromOsuFile(SongData& songData, int speed)
 {
-	std::string line;
+	std::wstring line;
 	bool foundTag = false;
 	std::map<int, Note*> holdNoteStarts;
 	while (std::getline(stream, line))
 	{
 		if (!foundTag)
 		{
-			if (lineHasTag(line, "HitObjects"))
+			if (lineHasTag(line, L"HitObjects"))
 				foundTag = true;
 		}
 		else
 		{
-			if (!lineHasTag(line, ""))
+			if (!lineHasTag(line, L""))
 			{
-				if (line.find_first_of("//") == 0)
+				if (line.find_first_of(L"//") == 0)
 					continue;
 
 				int index = 0;
@@ -261,21 +316,21 @@ void SongLoader::loadNotesFromOsuFile(SongData& songData, int speed)
 
 void SongLoader::loadNotesFromSongFile(SongData& songData)
 {
-	std::string line;
+	std::wstring line;
 	bool foundTag = false;
 	std::map<int, Note*> holdNoteStarts;
 	while (std::getline(stream, line))
 	{
 		if (!foundTag)
 		{
-			if (lineHasTag(line, "Notes"))
+			if (lineHasTag(line, L"Notes"))
 				foundTag = true;
 		}
 		else
 		{
-			if (!lineHasTag(line, ""))
+			if (!lineHasTag(line, L""))
 			{
-				if (line.find_first_of("//") == 0)
+				if (line.find_first_of(L"//") == 0)
 					continue;
 
 				int index = 0;

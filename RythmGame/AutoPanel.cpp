@@ -97,7 +97,10 @@ Panel* AutoPanel::getHoveredPanel(sf::Vector2i posRelativeToParent)
 
 Panel* AutoPanel::getDefaultSelectedPanel()
 {
-	return subPanels.front();
+	if (subPanels.size() > 0)
+		return subPanels.front();
+	else
+		return this;
 }
 
 void AutoPanel::render(int time, sf::RenderWindow& window, Skin& skin)

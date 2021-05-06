@@ -9,6 +9,7 @@ public:
 	~SongDataPanel();
 	void render(int time, sf::RenderWindow& window, Skin& skin) override;
 	void setSongData(SongData* songData);
+	SongData* getSongData();
 	void unloadSongData();
 	void onClick() override;
 

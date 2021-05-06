@@ -9,7 +9,7 @@ class SongList : public Panel
 public:
 	SongList(sf::Vector2i posRelativeToParent, sf::Vector2i size, Panel* parent, int songBufferSize, GameManager& gm, sf::Color boxColors[2], sf::Color textColor, sf::Font& font, int spacing);
 	~SongList();
-	Panel* getSubPanelInDirection(Direciton dir, sf::Vector2i posRelativeToThis) override;
+	Panel* getPanelInDirection(Direciton dir) override;
 	Panel* getHoveredPanel(sf::Vector2i posRelativeToParent) override;
 
 	void render(int time, sf::RenderWindow& window, Skin& skin) override;

@@ -15,7 +15,7 @@ private:
 	void loadNotesFromOsuFile(SongData& songData, int speed);
 	void loadNotesFromSongFile(SongData& songData);
 
-	std::ifstream stream;
+	std::wifstream stream;
 	SongData* openSongData;
-	std::vector<std::pair<std::string, std::string>> loadTagData(std::string tagName);
+	std::vector<std::pair<std::wstring, std::wstring>> loadTagData(std::wstring tagName);
 };
