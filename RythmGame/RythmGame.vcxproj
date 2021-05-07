@@ -151,6 +151,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)SFML\depLibs;$(SolutionDir)SFML\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-audio-s.lib;sfml-graphics-s.lib;sfml-network-s.lib;sfml-system-s.lib;sfml-window-s.lib;opengl32.lib;freetype.lib;winmm.lib;gdi32.lib;openal32.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ogg.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SetChecksum>true</SetChecksum>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y /d  "$(SolutionDir)SFML\bin\*.dll" "$(TargetDir)"</Command>

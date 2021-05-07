@@ -6,7 +6,8 @@ class SongLoader
 {
 public:
 	~SongLoader();
-	void loadGeneral(SongData &songData);
+	void loadMusic(SongData &songData);
+	void loadImage(SongData& songData);
 	void loadMetadata(SongData& songData);
 	void loadDifficulty(SongData& songData);
 	void loadNotes(SongData& songData);

@@ -4,12 +4,12 @@
 SongDataPanel::SongDataPanel(sf::Vector2i posRelativeToParent, sf::Vector2i size, Panel* parent, sf::Color boxColor, sf::Color textColor, sf::Font& font) : Panel(posRelativeToParent, parent, true), size{ size }
 {
 	interactable = false;
-	imageDisplay = sf::RectangleShape(sf::Vector2f(static_cast<float>(size.x) / 4, static_cast<float>(size.y)));
-	selectedBox = sf::RectangleShape(static_cast<sf::Vector2f>(size) - sf::Vector2f(static_cast<float>(size.x)/4,0));
+	imageDisplay = sf::RectangleShape(sf::Vector2f(static_cast<float>(size.x) / 3, static_cast<float>(size.y)));
+	selectedBox = sf::RectangleShape(static_cast<sf::Vector2f>(size) - sf::Vector2f(static_cast<float>(size.x)/3,0));
 	selectedBox.setFillColor(boxColor);
 	nameDisplay.setFillColor(textColor);
 	nameDisplay.setFont(font);
-	nameDisplay.setScale(sf::Vector2f(0.8f, 0.8f));
+	nameDisplay.setScale(sf::Vector2f(0.5f, 0.5f));
 }
 
 SongDataPanel::~SongDataPanel()
@@ -41,10 +41,9 @@ void SongDataPanel::setSongData(SongData* songData)
 	imageDisplay.setTexture(songData->image);
 
 	auto metadataSearch = songData->metadata.find(L"Title");
-	
 
 	if (metadataSearch != songData->metadata.end())
-		nameDisplay.setString(metadataSearch->second);
+		nameDisplay.setString(metadataSearch->second + L" ["  + songData->metadata[L"Version"] + L"] ");
 		
 
 }

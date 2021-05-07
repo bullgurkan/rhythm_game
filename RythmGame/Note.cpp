@@ -12,11 +12,12 @@ Note::Note(int hitTime, NotePosFunc* func, int color, NoteType noteType) : hitTi
 
 }
 Note::Note(int hitTime, NotePosFunc* func, int color, Note* holdStart) : hitTime{ hitTime }, endPos{ sf::Vector2f(0,0) }, func{ func }, color{ color }, noteType{ NoteType::HOLD_END }, holdStart{ holdStart }
-{}
+{	
+}
 
 Note::~Note()
 {
-	delete func;
+	delete func;	
 }
 
 sf::Vector2f Note::getPosition(int time, Skin& skin)

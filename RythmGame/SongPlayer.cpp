@@ -45,9 +45,9 @@ SongPlayer::SongPlayer(SongData* songData, int perfectTime, int hitTime, int mis
 
 SongPlayer::~SongPlayer()
 {
-
-	for (Note* note : notesDefault)
-		delete note;
+	std::cout << "delete " << std::endl;
+	//for (Note* note : notesDefault)
+		//delete note;
 
 }
 
@@ -95,7 +95,6 @@ void SongPlayer::render(int time, sf::RenderWindow& window)
 void SongPlayer::popNoteWithColor(InputData inputData)
 {
 
-	std::cout << (int)inputData.keyState << std::endl;
 	//could be in render for animations
 	//clearOldNotesInPopBuffer(inputData.time);
 

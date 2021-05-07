@@ -100,7 +100,7 @@ Panel* AutoPanel::getDefaultSelectedPanel()
 	if (subPanels.size() > 0)
 		return subPanels.front();
 	else
-		return this;
+		return nullptr;
 }
 
 void AutoPanel::render(int time, sf::RenderWindow& window, Skin& skin)

@@ -30,21 +30,25 @@ void MenuManager::keyChanged(KeyBind::KeyAction action, KeyBind::KeyState state)
 
 		{
 			// UP is the first dir so removing it from a dir will give a value between UP - RIGHT 0-3 (this will work even if  KeyBind::KeyAction::UP is not 0)
-			Panel* newSelection = currentlySelected->getPanelInDirection(static_cast<Panel::Direciton>(static_cast<int>(action) - static_cast<int>(KeyBind::KeyAction::Up)));
+			Panel* newSelection = nullptr;
+			if (currentlySelected != nullptr)
+				newSelection = currentlySelected->getPanelInDirection(static_cast<Panel::Direciton>(static_cast<int>(action) - static_cast<int>(KeyBind::KeyAction::Up)));
 			if (newSelection != nullptr)
 			{
 				currentlySelected->selected = false;
 				newSelection->selected = true;
 				currentlySelected = newSelection;
 			}
-				
+
 		}
-			break;
+		break;
 		case KeyBind::KeyAction::Click:
-			currentlySelected->onClick();
+			if (currentlySelected != nullptr)
+				currentlySelected->onClick();
 			break;
 		case KeyBind::KeyAction::Back:
-			currentlySelected->onBack();
+			if (currentlySelected != nullptr)
+				currentlySelected->onBack();
 			break;
 		default:
 			break;
@@ -71,10 +75,11 @@ void MenuManager::setActiveScene(Scene scene)
 	if (sceneSearch != loadedScenes.end())
 	{
 		renderRoot = inputRoot = sceneSearch->second;
-		if(currentlySelected != nullptr)
+		if (currentlySelected != nullptr)
 			currentlySelected->selected = false;
 		currentlySelected = inputRoot->getDefaultSelectedPanel();
-		currentlySelected->selected = true;
+		if (currentlySelected != nullptr)
+			currentlySelected->selected = true;
 	}
 	else
 	{

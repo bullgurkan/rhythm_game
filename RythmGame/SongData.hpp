@@ -13,7 +13,8 @@ public:
 	std::wstring songDir;
 	std::wstring songFileName;
 	std::vector<Note*> notes;
-	int difficulty;
+	float difficulty;
 	int amountOfKeys;
+	int previewTime;
 	~SongData();
 };

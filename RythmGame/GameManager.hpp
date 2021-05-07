@@ -15,15 +15,15 @@ public:
 
 	std::vector<SongData> songs;
 	SongLoader songLoader;
+	float playbackSpeed;
 private:
 	sf::RenderWindow window;
 	Skin skin;
 	SongPlayer *songPlayer;
 	SongData* selectedSongData;
-
 	InputManager input;
-	float playbackSpeed;
 	MenuManager menuManager;
 	sf::Font font;
+	long time;
 
 };

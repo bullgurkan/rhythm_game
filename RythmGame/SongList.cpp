@@ -13,9 +13,15 @@ SongList::SongList(sf::Vector2i posRelativeToParent, sf::Vector2i size, Panel* p
 		if (songIndex >= gm.songs.size())
 			songIndex = 0;
 
-		gm.songLoader.loadGeneral(gm.songs[songIndex]);
+		gm.songLoader.loadImage(gm.songs[songIndex]);
 		subPanels[subPanels.size() - 1]->setSongData(&gm.songs[songIndex]);
 	}
+	
+	gm.songLoader.loadMusic(*subPanels[songBufferSize / 2]->getSongData());
+	sf::Sound* currentMusic = subPanels[songBufferSize / 2]->getSongData()->music;
+	currentMusic->setPitch(gm.playbackSpeed);
+	currentMusic->setPlayingOffset(sf::milliseconds(static_cast<int>(subPanels[songBufferSize / 2]->getSongData()->previewTime * gm.playbackSpeed)));
+	currentMusic->play();
 	
 }
 
@@ -30,6 +36,7 @@ Panel* SongList::getPanelInDirection(Direciton dir)
 	{
 		SongData* songDataTemp;
 		int songIndex;
+		sf::Sound* currentMusic;
 		switch (dir)
 		{
 
@@ -40,37 +47,59 @@ Panel* SongList::getPanelInDirection(Direciton dir)
 			selectedSongId++;
 			if (selectedSongId >= gm.songs.size())
 				selectedSongId = 0;
-			songIndex = selectedSongId + subPanels.size() - 1;
+			songIndex = selectedSongId + static_cast<int>(subPanels.size()) - 1;
 			while (songIndex >= gm.songs.size())
-				songIndex -= gm.songs.size();
+				songIndex -= static_cast<int>(gm.songs.size());
+
+			subPanels[songBufferSize / 2]->getSongData()->music->stop();
 
 			for (int i = 0; i < subPanels.size(); i++)
 			{
 				songDataTemp = subPanels[i]->getSongData();
-				if (static_cast<int64_t>(i) + 1 < subPanels.size())
+				if (static_cast<unsigned long long>(i) + 1 < subPanels.size())
 					subPanels[i]->setSongData(subPanels[static_cast<int64_t>(i) + 1]->getSongData());
 				else
+				{
+					gm.songLoader.loadImage(gm.songs[songIndex]);
 					subPanels[i]->setSongData(&gm.songs[songIndex]);
+				}
+					
 			}
+			gm.songLoader.loadMusic(*subPanels[songBufferSize / 2]->getSongData());
+			currentMusic = subPanels[songBufferSize / 2]->getSongData()->music;
+			currentMusic->setPitch(gm.playbackSpeed);
+			currentMusic->setPlayingOffset(sf::milliseconds(static_cast<int>(subPanels[songBufferSize / 2]->getSongData()->previewTime * gm.playbackSpeed)));
+			currentMusic->play();
 
 			break;
 		case Direciton::UP:
 			selectedSongId--;
 			if (selectedSongId < 0)
-				selectedSongId = gm.songs.size() - 1;
+				selectedSongId = static_cast<int>(gm.songs.size()) - 1;
 
 			songIndex = selectedSongId;
 			while (songIndex >= gm.songs.size())
-				songIndex -= gm.songs.size();
+				songIndex -= static_cast<int>(gm.songs.size());
 
-			for (int i = subPanels.size() - 1; i >= 0; i--)
+			subPanels[songBufferSize / 2]->getSongData()->music->stop();
+
+			for (int i = static_cast<int>(subPanels.size()) - 1; i >= 0; i--)
 			{
 				songDataTemp = subPanels[i]->getSongData();
 				if (static_cast<int64_t>(i) - 1 >= 0)
 					subPanels[i]->setSongData(subPanels[static_cast<int64_t>(i) - 1]->getSongData());
 				else
+				{
+					gm.songLoader.loadImage(gm.songs[songIndex]);
 					subPanels[i]->setSongData(&gm.songs[songIndex]);
+				}
 			}
+			gm.songLoader.loadMusic(*subPanels[songBufferSize / 2]->getSongData());
+			currentMusic = subPanels[songBufferSize / 2]->getSongData()->music;
+			currentMusic->setPitch(gm.playbackSpeed);
+			currentMusic->setPlayingOffset(sf::milliseconds(static_cast<int>(subPanels[songBufferSize / 2]->getSongData()->previewTime * gm.playbackSpeed)));
+			currentMusic->play();
+
 			break;
 
 		}

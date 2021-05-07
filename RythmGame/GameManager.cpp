@@ -13,14 +13,17 @@ const sf::Vector2f screenSize(1920, 1080);
 const std::vector<sf::Color> defaultNoteColors = { sf::Color(255, 0, 102), sf::Color::Green, sf::Color(128, 0, 255), sf::Color::Cyan };
 const std::vector<sf::Color> defaultHitColors = { sf::Color::Red, sf::Color(255,140,0), sf::Color::White, sf::Color(0, 191, 255), sf::Color::Blue };
 
-const std::string pathBase = "C:/Users/spp104/Documents/rhythm_game/x64/Release/";
+const std::string pathBase = "C:/Users/Gustav/source/repos/RythmGame/x64/Release";
 
 GameManager::GameManager() : skin(30, defaultNoteColors, defaultHitColors, screenSize, sf::Color(255, 255, 255, 150)), window(sf::VideoMode((unsigned int)screenSize.x, (unsigned int)screenSize.y), "Rhythm Game"), songPlayer{ nullptr }, input(keyBinds, mouseButtonBinds), selectedSongData{ nullptr }, playbackSpeed{ 1 }, menuManager()
 {
-	window.setKeyRepeatEnabled(false);
-	font.loadFromFile(pathBase + "Fonts/good_times_rg.ttf");
 
-	for (const auto& entry : std::filesystem::directory_iterator(pathBase + "Songs"))
+	std::string basepath = std::filesystem::current_path().string();
+	//basepath = std::filesystem::current_path().string();
+	window.setKeyRepeatEnabled(false);
+	font.loadFromFile(basepath + "/Fonts/good_times_rg.ttf");
+
+	for (const auto& entry : std::filesystem::directory_iterator(basepath +  + "/Songs"))
 	{
 
 		if (entry.is_directory())
@@ -40,6 +43,7 @@ GameManager::GameManager() : skin(30, defaultNoteColors, defaultHitColors, scree
 							songs[songs.size() - 1].songDir = entry.path().wstring() + L"/";
 							songs[songs.size() - 1].songFileName = songEntry.path().filename().wstring();
 							songLoader.loadMetadata(songs[songs.size() - 1]);
+							songLoader.loadDifficulty(songs[songs.size() - 1]);
 						}
 					}
 				}
@@ -82,16 +86,16 @@ void GameManager::LoadSong(SongData* selectedSongData)
 	//move to option file and or modifier
 	//playbackSpeed = std::stof(loadedSongData->metadata["Speed"]);
 
-
-	this->selectedSongData->music->setVolume(25);
+	this->selectedSongData->music->stop();
 	this->selectedSongData->music->setPitch(playbackSpeed);
+	time = -3000;
 	menuManager.setActiveScene(MenuManager::Scene::IN_GAME);
 }
 
 void GameManager::Start()
 {
 
-	long time = -3000;
+	time = -3000;
 	long lastTime = (long)std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 	long currentTime = 0;
 	bool hasPrintedAcc = false;
