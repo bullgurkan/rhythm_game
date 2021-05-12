@@ -168,6 +168,7 @@
     <ClCompile Include="MenuManager.cpp" />
     <ClCompile Include="Note.cpp" />
     <ClCompile Include="Panel.cpp" />
+    <ClCompile Include="ScorePanel.cpp" />
     <ClCompile Include="Skin.cpp" />
     <ClCompile Include="SongDataPanel.cpp" />
     <ClCompile Include="SongList.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="NotePosFunc.hpp" />
     <ClInclude Include="Panel.hpp" />
     <ClInclude Include="SceneDefaults.hpp" />
+    <ClInclude Include="ScorePanel.hpp" />
     <ClInclude Include="Skin.hpp" />
     <ClInclude Include="SongDataPanel.hpp" />
     <ClInclude Include="SongList.hpp" />

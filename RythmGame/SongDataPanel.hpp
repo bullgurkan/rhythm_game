@@ -12,6 +12,7 @@ public:
 	SongData* getSongData();
 	void unloadSongData();
 	void onClick() override;
+	void onSceneLoad() override;
 
 private:
 	bool inBounds(sf::Vector2i posRelativeToParent) override;

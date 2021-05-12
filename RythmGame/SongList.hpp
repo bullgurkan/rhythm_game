@@ -14,6 +14,7 @@ public:
 
 	void render(int time, sf::RenderWindow& window, Skin& skin) override;
 	void onClick() override;
+	void onSceneLoad() override;
 
 private:
 	bool inBounds(sf::Vector2i posRelativeToParent) override;

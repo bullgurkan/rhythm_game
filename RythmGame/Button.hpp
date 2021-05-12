@@ -10,6 +10,7 @@ public:
 
 	void render(int time, sf::RenderWindow& window, Skin& skin) override;
 	void onClick() override;
+	void onSceneLoad() override;
 	std::function<void()> onClickFunc;
 private:
 	virtual bool inBounds(sf::Vector2i posRelativeToParent) override;

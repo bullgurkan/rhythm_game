@@ -61,7 +61,7 @@ void SongLoader::loadMusic(SongData& songData)
 					songData.musicData->loadFromMemory(&buffer[0], buffer.size() * sizeof(char));
 					//songData.musicData->loadFromFile("C/Users/spp104/Documents/rhythm_game/x64/Release/Songs/(aperson)Tranzport/15._(Arkitech)_Tranzport.mp3");
 					songData.music->setBuffer(*songData.musicData);
-					songData.music->setVolume(25);
+					songData.music->setVolume(15);
 
 				}
 			}

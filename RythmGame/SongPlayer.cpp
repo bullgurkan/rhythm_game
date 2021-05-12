@@ -45,7 +45,6 @@ SongPlayer::SongPlayer(SongData* songData, int perfectTime, int hitTime, int mis
 
 SongPlayer::~SongPlayer()
 {
-	std::cout << "delete " << std::endl;
 	//for (Note* note : notesDefault)
 		//delete note;
 
@@ -55,20 +54,22 @@ void SongPlayer::render(int time, sf::RenderWindow& window)
 {
 
 	std::vector<Note*>::iterator it = notes.begin();
+
+	int smallestHitTime = notes[0]->hitTime;
 	while (it != notes.end())
 	{
 		sf::Vector2f pos = (*it)->getPosition(time, skin);
 		if (pos != zeroVector)
 		{
-			skin.renderNote(time, window, pos, (*it)->getPosition(time - 1, skin), (*it)->color);
+			skin.renderNote(time, window, pos, (*it)->getPosition(time - 1, skin), (*it)->color, (*it)->hitTime == smallestHitTime && nonPoppedNoteBuffer.size() == 0);
 			if ((*it)->noteType == Note::NoteType::HOLD_END)
 				if (time > (*it)->holdStart->hitTime)
 				{
-					skin.renderHoldLine(time, window, skin.getNoteMiddle(pos, (*it)->getPosition(time - 1, skin)), getMiddleColorPositionAtTime(time, (*it)->color), (*it)->color);
+					skin.renderHoldLine(time, window, skin.getNoteMiddle(pos, (*it)->getPosition(time - 1, skin)), getMiddleColorPositionAtTime(time, (*it)->color), (*it)->color, false);
 				}
 				else if (time > (*it)->holdStart->hitTime - 1000)
 				{
-					skin.renderHoldLine(time, window, skin.getNoteMiddle(pos, (*it)->getPosition(time - 1, skin)), skin.getNoteMiddle((*it)->holdStart->getPosition(time, skin), (*it)->holdStart->getPosition(time - 1, skin)), (*it)->color);
+					skin.renderHoldLine(time, window, skin.getNoteMiddle(pos, (*it)->getPosition(time - 1, skin)), skin.getNoteMiddle((*it)->holdStart->getPosition(time, skin), (*it)->holdStart->getPosition(time - 1, skin)), (*it)->color, false);
 				}
 
 
@@ -81,6 +82,8 @@ void SongPlayer::render(int time, sf::RenderWindow& window)
 			it = notes.erase(it);
 		}
 	}
+
+
 
 	skin.renderMiddle(time, window, getMiddleRotation(time) == 0 ? 0 : static_cast<float>(360 - 180 / M_PI * getMiddleRotation(time)));
 
@@ -208,7 +211,7 @@ void SongPlayer::noteHitUpdate(int hitDelta, int color, Note::NoteType noteType)
 	}
 	else if (hitDelta <= missTime)
 	{
-		//skin.showHitMark(Skin::HitType::LATE_MISS);
+		skin.showHitMark(Skin::HitType::LATE_MISS);
 		totalMissTimeInMs += hitTime;
 		if (noteType == Note::NoteType::HOLD_START)
 			onHoldStartMiss(color);

@@ -39,6 +39,11 @@ void SongDataPanel::setSongData(SongData* songData)
 {
 	this->songData = songData;
 	imageDisplay.setTexture(songData->image);
+	sf::IntRect rect;
+	rect.width = static_cast<int>(songData->image->getSize().x);
+	rect.height = static_cast<int>(songData->image->getSize().y);
+	imageDisplay.setTextureRect(rect);
+
 
 	auto metadataSearch = songData->metadata.find(L"Title");
 
@@ -59,6 +64,9 @@ void SongDataPanel::unloadSongData()
 }
 
 void SongDataPanel::onClick()
+{}
+
+void SongDataPanel::onSceneLoad()
 {}
 
 bool SongDataPanel::inBounds(sf::Vector2i posRelativeToParent)

@@ -15,10 +15,10 @@ public:
 	};
 	Skin(float middleRadius, std::vector<sf::Color> colors, std::vector<sf::Color> hitMarkerColors, sf::Vector2f screenSize, sf::Color notPressedColorMult);
 	~Skin();
-	void renderNote(int time, sf::RenderWindow &window, sf::Vector2f position, sf::Vector2f prevPos, int colorId);
+	void renderNote(int time, sf::RenderWindow &window, sf::Vector2f position, sf::Vector2f prevPos, int colorId, bool isNextNote);
 	void prepareMiddleForSong(int amountOfColors);
 	void renderMiddle(int time, sf::RenderWindow &window, float rotation);
-	void renderHoldLine(int time, sf::RenderWindow& window, sf::Vector2f pos1, sf::Vector2f pos2, int colorId);
+	void renderHoldLine(int time, sf::RenderWindow& window, sf::Vector2f pos1, sf::Vector2f pos2, int colorId, bool heldOrNextNote);
 	void showHitMark(HitType hitType);
 	void setColorPressed(bool pressed, int colorId);
 	float getMiddleRadius();

@@ -1,20 +1,20 @@
 #include "SongList.hpp"
 #include <iostream>
 
-SongList::SongList(sf::Vector2i posRelativeToParent, sf::Vector2i size, Panel* parent, int songBufferSize, GameManager& gm, sf::Color boxColors[2], sf::Color textColor, sf::Font& font, int spacing) : Panel(posRelativeToParent, parent, true), size{ size }, songBufferSize{ songBufferSize }, gm{ gm }
+SongList::SongList(sf::Vector2i posRelativeToParent, sf::Vector2i size, Panel* parent, int songBufferSize, GameManager& gm, sf::Color boxColors[2], sf::Color textColor, sf::Font& font, int spacing) : Panel(posRelativeToParent, parent, true), size{ size }, songBufferSize{ songBufferSize }, gm{ gm }, selectedSongId{0}
 {
-	//selectedSongId = songBufferSize / 2;
 	int songIndex = 0;
 	for (int i = 0; i < songBufferSize; i++)
 	{
 		subPanels.push_back(new SongDataPanel(sf::Vector2i(0, i * (size.y / songBufferSize + spacing)), sf::Vector2i(size.x, size.y / songBufferSize - spacing * songBufferSize), this, boxColors[i == songBufferSize / 2 ? 1 : 0], textColor, font));
+		gm.songLoader.loadImage(gm.songs[songIndex]);
+		subPanels[subPanels.size() - 1]->setSongData(&gm.songs[songIndex]);
 
 		songIndex++;
 		if (songIndex >= gm.songs.size())
 			songIndex = 0;
 
-		gm.songLoader.loadImage(gm.songs[songIndex]);
-		subPanels[subPanels.size() - 1]->setSongData(&gm.songs[songIndex]);
+
 	}
 	
 	gm.songLoader.loadMusic(*subPanels[songBufferSize / 2]->getSongData());
@@ -121,12 +121,24 @@ void SongList::render(int time, sf::RenderWindow& window, Skin& skin)
 	for (Panel* child : subPanels)
 		child->render(time, window, skin);
 
+	sf::Sound* currentMusic = subPanels[songBufferSize / 2]->getSongData()->music;
+
+	if (currentMusic != nullptr && currentMusic->getStatus() == sf::SoundSource::Status::Stopped)
+	{
+		currentMusic->setPitch(gm.playbackSpeed);
+		currentMusic->setPlayingOffset(sf::milliseconds(static_cast<int>(subPanels[songBufferSize / 2]->getSongData()->previewTime * gm.playbackSpeed)));
+		currentMusic->play();
+	}
+
 }
 
 void SongList::onClick()
 {
 	gm.LoadSong(subPanels[subPanels.size() / 2]->getSongData());
 }
+
+void SongList::onSceneLoad()
+{}
 
 bool SongList::inBounds(sf::Vector2i posRelativeToParent)
 {

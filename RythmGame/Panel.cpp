@@ -13,6 +13,10 @@ void Panel::onBack()
 	parent->onBack();
 }
 
+
+void Panel::onSceneLoad()
+{}
+
 Panel* Panel::getHoveredPanel(sf::Vector2i posRelativeToParent)
 {
 	return nullptr;

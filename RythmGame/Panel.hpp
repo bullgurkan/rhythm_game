@@ -21,12 +21,14 @@ public:
 	virtual void render(int time, sf::RenderWindow& window, Skin &skin) = 0;
 	virtual void onClick() = 0;
 	virtual void onBack();
+	virtual void onSceneLoad() = 0;
 	virtual Panel* getPanelInDirection(Direciton dir);
 	sf::Vector2i pos;
 	bool interactable;
 	bool selected;
 	//bool held;
 protected:
+
 	virtual bool inBounds(sf::Vector2i posRelativeToParent) = 0;
 	Panel* parent;
 

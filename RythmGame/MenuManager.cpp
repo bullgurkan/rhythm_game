@@ -1,7 +1,8 @@
 #include "MenuManager.hpp"
 #include <iostream>
+#include "GameManager.hpp"
 
-MenuManager::MenuManager() : currentlySelected{ nullptr }, inputRoot{ nullptr }, renderRoot{ nullptr }
+MenuManager::MenuManager(GameManager& gm) : currentlySelected{ nullptr }, inputRoot{ nullptr }, renderRoot{ nullptr }, gm{ gm }
 {}
 
 MenuManager::~MenuManager()
@@ -17,8 +18,7 @@ void MenuManager::render(int time, sf::RenderWindow& window, Skin& skin)
 
 void MenuManager::keyChanged(KeyBind::KeyAction action, KeyBind::KeyState state)
 {
-	if (currentlySelected == nullptr)
-		return;
+
 	if (state == KeyBind::KeyState::Pressed)
 	{
 		switch (action)
@@ -29,6 +29,8 @@ void MenuManager::keyChanged(KeyBind::KeyAction action, KeyBind::KeyState state)
 		case KeyBind::KeyAction::Right:
 
 		{
+			if (currentlySelected == nullptr)
+				break;
 			// UP is the first dir so removing it from a dir will give a value between UP - RIGHT 0-3 (this will work even if  KeyBind::KeyAction::UP is not 0)
 			Panel* newSelection = nullptr;
 			if (currentlySelected != nullptr)
@@ -47,8 +49,8 @@ void MenuManager::keyChanged(KeyBind::KeyAction action, KeyBind::KeyState state)
 				currentlySelected->onClick();
 			break;
 		case KeyBind::KeyAction::Back:
-			if (currentlySelected != nullptr)
-				currentlySelected->onBack();
+			if (inputRoot != nullptr)
+				inputRoot->onBack();
 			break;
 		default:
 			break;
@@ -71,15 +73,19 @@ void MenuManager::textEntered(int unicode)
 
 void MenuManager::setActiveScene(Scene scene)
 {
+	
 	auto sceneSearch = loadedScenes.find(scene);
 	if (sceneSearch != loadedScenes.end())
 	{
 		renderRoot = inputRoot = sceneSearch->second;
+		inputRoot->onSceneLoad();
 		if (currentlySelected != nullptr)
 			currentlySelected->selected = false;
 		currentlySelected = inputRoot->getDefaultSelectedPanel();
 		if (currentlySelected != nullptr)
 			currentlySelected->selected = true;
+		if (scene != Scene::IN_GAME)
+			gm.LoadSong(nullptr);
 	}
 	else
 	{

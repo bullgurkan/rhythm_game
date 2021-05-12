@@ -81,6 +81,9 @@
     <ClCompile Include="SongDataPanel.cpp">
       <Filter>Source Files\Menu</Filter>
     </ClCompile>
+    <ClCompile Include="ScorePanel.cpp">
+      <Filter>Source Files\Menu</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameManager.hpp">
@@ -138,6 +141,9 @@
       <Filter>Header Files\Menu</Filter>
     </ClInclude>
     <ClInclude Include="SongDataPanel.hpp">
+      <Filter>Header Files\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="ScorePanel.hpp">
       <Filter>Header Files\Menu</Filter>
     </ClInclude>
   </ItemGroup>

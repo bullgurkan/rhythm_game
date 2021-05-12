@@ -2,10 +2,12 @@
 #include "KeyBind.hpp"
 #include "Panel.hpp"
 #include <unordered_map>
+
+class GameManager;
 class MenuManager
 {
 public:
-	MenuManager();
+	MenuManager(GameManager &gm);
 	~MenuManager();
 
 	enum class Scene
@@ -31,6 +33,7 @@ private:
 	Panel* renderRoot;
 	Panel* inputRoot;
 	Panel* currentlySelected;
+	GameManager &gm;
 
 	std::unordered_map<Scene, Panel*> loadedScenes;
 

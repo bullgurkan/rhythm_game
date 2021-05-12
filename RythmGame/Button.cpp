@@ -43,6 +43,9 @@ void Button::onClick()
 		onClickFunc();
 }
 
+void Button::onSceneLoad()
+{}
+
 bool Button::inBounds(sf::Vector2i posRelativeToParent)
 {
 	sf::Vector2i posRelativeToThis = posRelativeToParent - pos;

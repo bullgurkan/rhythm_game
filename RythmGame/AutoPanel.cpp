@@ -4,6 +4,11 @@
 AutoPanel::AutoPanel(sf::Vector2i posRelativeToParent, sf::Vector2i size, Panel* parent, bool loopSelectorAtEdge) : Panel(posRelativeToParent, parent, true), size{ size }, loopSelectorAtEdge{ loopSelectorAtEdge }
 {}
 
+AutoPanel::AutoPanel(sf::Vector2i posRelativeToParent, sf::Vector2i size, Panel* parent, bool loopSelectorAtEdge, std::function<void()> onBackFunction) : AutoPanel(posRelativeToParent, size, parent, loopSelectorAtEdge) 
+{
+	this->onBackFunction = onBackFunction;
+}
+
 AutoPanel::~AutoPanel()
 {
 	for (auto child : subPanels)
@@ -76,7 +81,7 @@ Panel* AutoPanel::getSubPanelInDirectionNonRecursive(Direciton dir, sf::Vector2i
 			}
 		
 
-			if (dist < distance && (dist >= 0 ||(dist != 0 && !ignoreNegativeDistance)))
+			if (child->interactable && dist < distance && (dist >= 0 ||(dist != 0 && !ignoreNegativeDistance)))
 			{
 				//std::cout << posRelativeToThis.y << " " <<dist << std::endl;
 				closest = child;
@@ -98,7 +103,15 @@ Panel* AutoPanel::getHoveredPanel(sf::Vector2i posRelativeToParent)
 Panel* AutoPanel::getDefaultSelectedPanel()
 {
 	if (subPanels.size() > 0)
-		return subPanels.front();
+	{
+		for (auto child : subPanels)
+		{
+			if(child->interactable)
+				return child;
+		}
+		
+	}
+		
 	else
 		return nullptr;
 }
@@ -106,9 +119,8 @@ Panel* AutoPanel::getDefaultSelectedPanel()
 void AutoPanel::render(int time, sf::RenderWindow& window, Skin& skin)
 {
 	for (Panel* child : subPanels)
-	{
 		child->render(time, window, skin);
-	}
+
 }
 
 bool AutoPanel::inBounds(sf::Vector2i posRelativeToParent)
@@ -122,7 +134,19 @@ void AutoPanel::onClick()
 	std::cout << "AutoPanel should not be selected and thus not clicked" << std::endl;
 }
 
+void AutoPanel::onSceneLoad()
+{
+	for (Panel* child : subPanels)
+		child->onSceneLoad();
+}
+
 void AutoPanel::addSubPanel(Panel* subPanel)
 {
 	subPanels.push_back(subPanel);
+}
+
+void AutoPanel::onBack()
+{
+	if (onBackFunction != nullptr)
+		onBackFunction();
 }

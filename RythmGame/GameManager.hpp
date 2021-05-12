@@ -12,15 +12,17 @@ public:
 	~GameManager();
 	void LoadSong(SongData* selectedSongData);
 	void Start();
+	int getSongAccuracy();
 
 	std::vector<SongData> songs;
 	SongLoader songLoader;
 	float playbackSpeed;
+
 private:
 	sf::RenderWindow window;
 	Skin skin;
-	SongPlayer *songPlayer;
 	SongData* selectedSongData;
+	SongPlayer* songPlayer;
 	InputManager input;
 	MenuManager menuManager;
 	sf::Font font;
