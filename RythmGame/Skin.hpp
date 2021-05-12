@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Shape.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 
 class Skin
 {
@@ -30,6 +31,7 @@ private:
 	float middleRadius;
 	sf::Shape* noteShape;
 	std::vector <sf::Shape*> middleShapes;
+	sf::RectangleShape* gridShape;
 	sf::Shape* middleHitMarkerShape;
 	sf::Vector2f screenCenter;
 	sf::Color notPressedColorMult;

@@ -18,7 +18,10 @@ Skin::Skin(float middleRadius, std::vector<sf::Color> colors, std::vector<sf::Co
 
 	noteShape = noteShapeTri;
 
-
+	gridShape = new sf::RectangleShape();
+	gridShape->setFillColor(sf::Color::Transparent);
+	
+	gridShape->setOutlineThickness(2);
 }
 
 Skin::~Skin()
@@ -41,7 +44,22 @@ void Skin::renderNote(int time, sf::RenderWindow& window, sf::Vector2f position,
 	noteShape->setRotation(rotation);
 	//noteShape->setFillColor(isNextNote ? colors[colorId] : colors[colorId] * notPressedColorMult);
 	noteShape->setFillColor(colors[colorId]);
+
+	float dist = std::sqrt(position.x * position.x + position.y * position.y);
+	gridShape->setSize(sf::Vector2f(dist * 2, dist * 2));
+	gridShape->setOrigin(sf::Vector2f(dist, dist));
+	gridShape->setRotation(rotation);
+	gridShape->setPosition(screenCenter);
+	float i = (1 - dist / 500);
+	if (i < 0)
+		i = 0;
+
+	gridShape->setOutlineColor(sf::Color(255, 255, 255, i * 80));
+
+	window.draw(*gridShape);
+
 	window.draw(*noteShape);
+
 }
 
 void Skin::prepareMiddleForSong(int amountOfColors)

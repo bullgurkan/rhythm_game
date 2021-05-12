@@ -50,10 +50,16 @@ SongPlayer::~SongPlayer()
 
 }
 
+bool inBounds(sf::Vector2f pos, sf::Vector2f box)
+{
+	return pos.x > -box.x && pos.x < box.x&& pos.y > -box.y && pos.y < box.y;
+}
+
 void SongPlayer::render(int time, sf::RenderWindow& window)
 {
 
 	std::vector<Note*>::iterator it = notes.begin();
+	sf::Vector2f windowSize = static_cast<sf::Vector2f>(window.getSize())/2.0f;
 
 	int smallestHitTime = notes[0]->hitTime;
 	while (it != notes.end())
@@ -61,16 +67,23 @@ void SongPlayer::render(int time, sf::RenderWindow& window)
 		sf::Vector2f pos = (*it)->getPosition(time, skin);
 		if (pos != zeroVector)
 		{
-			skin.renderNote(time, window, pos, (*it)->getPosition(time - 1, skin), (*it)->color, (*it)->hitTime == smallestHitTime && nonPoppedNoteBuffer.size() == 0);
-			if ((*it)->noteType == Note::NoteType::HOLD_END)
-				if (time > (*it)->holdStart->hitTime)
-				{
-					skin.renderHoldLine(time, window, skin.getNoteMiddle(pos, (*it)->getPosition(time - 1, skin)), getMiddleColorPositionAtTime(time, (*it)->color), (*it)->color, false);
-				}
-				else if (time > (*it)->holdStart->hitTime - 1000)
-				{
-					skin.renderHoldLine(time, window, skin.getNoteMiddle(pos, (*it)->getPosition(time - 1, skin)), skin.getNoteMiddle((*it)->holdStart->getPosition(time, skin), (*it)->holdStart->getPosition(time - 1, skin)), (*it)->color, false);
-				}
+			
+			sf::Vector2f prevPos = (*it)->getPosition(time - 1, skin);
+			if (inBounds(pos, windowSize) || ((*it)->noteType == Note::NoteType::HOLD_END && (inBounds((*it)->holdStart->getPosition(time, skin), windowSize) || time > (*it)->holdStart->hitTime)))
+			{
+				skin.renderNote(time, window, pos, prevPos, (*it)->color, (*it)->hitTime == smallestHitTime && nonPoppedNoteBuffer.size() == 0);
+				if ((*it)->noteType == Note::NoteType::HOLD_END)
+					if (time > (*it)->holdStart->hitTime)
+					{
+						skin.renderHoldLine(time, window, skin.getNoteMiddle(pos, prevPos), getMiddleColorPositionAtTime(time, (*it)->color), (*it)->color, true);
+					}
+					else
+					{
+						skin.renderHoldLine(time, window, skin.getNoteMiddle(pos, prevPos), skin.getNoteMiddle((*it)->holdStart->getPosition(time, skin), (*it)->holdStart->getPosition(time - 1, skin)), (*it)->color, true);
+					}
+			}
+				
+			
 
 
 
@@ -220,7 +233,23 @@ void SongPlayer::noteHitUpdate(int hitDelta, int color, Note::NoteType noteType)
 
 void SongPlayer::onHoldStartMiss(int color)
 {
-	std::vector<Note*>::iterator it = notes.begin();
+	
+	std::vector<Note*>::iterator it = nonPoppedNoteBuffer.begin();
+
+	while (it != nonPoppedNoteBuffer.end())
+	{
+
+		if ((*it)->color == color && (*it)->noteType == Note::NoteType::HOLD_END)
+		{
+			nonPoppedNoteBuffer.erase(it);
+			totalMissTimeInMs += hitTime;
+			return;
+		}
+		it++;
+
+	}
+
+	it = notes.begin();
 	while (it != notes.end())
 	{
 
@@ -228,7 +257,7 @@ void SongPlayer::onHoldStartMiss(int color)
 		{
 			notes.erase(it);
 			totalMissTimeInMs += hitTime;
-			break;
+			return;
 		}
 		it++;
 

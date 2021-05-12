@@ -3,7 +3,7 @@
 #include "LineNotePosFunc.hpp"
 #include <iostream>
 
-int osu_default_note_speed = 700;
+int osu_default_note_speed = 1000;
 
 SongLoader::~SongLoader()
 {

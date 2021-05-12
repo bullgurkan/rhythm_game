@@ -14,10 +14,10 @@ const std::vector<sf::Color> defaultNoteColors = { sf::Color(255, 0, 102), sf::C
 const std::vector<sf::Color> defaultHitColors = { sf::Color::Red, sf::Color(255,140,0), sf::Color::White, sf::Color(0, 191, 255), sf::Color::Blue };
 
 
-GameManager::GameManager() : skin(30, defaultNoteColors, defaultHitColors, screenSize, sf::Color(255, 255, 255, 130)), window(sf::VideoMode((unsigned int)screenSize.x, (unsigned int)screenSize.y), "Rhythm Game"), songPlayer{ nullptr }, input(keyBinds, mouseButtonBinds), selectedSongData{ nullptr }, playbackSpeed{ 1 }, menuManager(*this)
+GameManager::GameManager() : skin(30, defaultNoteColors, defaultHitColors, screenSize, sf::Color(126, 126, 126, 255)), window(sf::VideoMode((unsigned int)screenSize.x, (unsigned int)screenSize.y), "Rhythm Game"), songPlayer{ nullptr }, input(keyBinds, mouseButtonBinds), selectedSongData{ nullptr }, playbackSpeed{ 1 }, menuManager(*this)
 {
 
-	playbackSpeed = 1.0f;
+	playbackSpeed = 0.1f;
 	std::string basepath = std::filesystem::current_path().string();
 	window.setKeyRepeatEnabled(false);
 	font.loadFromFile(basepath + "/Fonts/good_times_rg.ttf");
