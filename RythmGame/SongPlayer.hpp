@@ -34,7 +34,7 @@ private:
 	int endTime;
 	Skin &skin;
 	sf::SoundBuffer songBuffer;
-	void noteHitUpdate(int hitTime, int color, Note::NoteType noteType);
+	void noteHitUpdate(int hitTime, int color, Note::NoteType noteType, int time);
 	void onHoldStartMiss(int color);
 	float getMiddleRotation(int time);
 	sf::Vector2f getMiddleColorPositionAtTime(int time, int color);

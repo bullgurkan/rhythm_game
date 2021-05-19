@@ -10,17 +10,27 @@
 
 
 const sf::Vector2f screenSize(1920, 1080);
-const std::vector<sf::Color> defaultNoteColors = { sf::Color(255, 182, 193), sf::Color(255, 140, 0), sf::Color(148, 0, 211), sf::Color::Cyan };
+const std::vector<sf::Color> defaultNoteColors = { sf::Color(255, 105, 180), sf::Color(255, 140, 0), sf::Color(148, 0, 211), sf::Color::Cyan };
 const std::vector<sf::Color> defaultHitColors = { sf::Color::Red, sf::Color::Green, sf::Color::Yellow, sf::Color::Green, sf::Color::Red };
 
 
 GameManager::GameManager() : skin(30, defaultNoteColors, defaultHitColors, screenSize, sf::Color(126, 126, 126, 255)), window(sf::VideoMode((unsigned int)screenSize.x, (unsigned int)screenSize.y), "Rhythm Game"), songPlayer{ nullptr }, input(keyBinds, mouseButtonBinds), selectedSongData{ nullptr }, playbackSpeed{ 1 }, menuManager(*this)
 {
 
-	playbackSpeed = 1.0f;
+	playbackSpeed = 0.5f;
 	std::string basepath = std::filesystem::current_path().string();
 	window.setKeyRepeatEnabled(false);
 	font.loadFromFile(basepath + "/Fonts/good_times_rg.ttf");
+
+	std::unordered_map<Skin::HitType, sf::SoundBuffer*> hitSounds;
+	sf::SoundBuffer* sb = new sf::SoundBuffer();
+	sb->loadFromFile(basepath + "/Sounds/bad_hit.mp3");
+	hitSounds.insert_or_assign(Skin::HitType::EARLY_HIT, sb);
+	hitSounds.insert_or_assign(Skin::HitType::LATE_HIT, sb);
+	sb->loadFromFile(basepath + "/Sounds/good_hit.mp3");
+	hitSounds.insert_or_assign(Skin::HitType::PERFECT, sb);
+
+	skin.setHitSounds(hitSounds);
 
 	for (const auto& entry : std::filesystem::directory_iterator(basepath + "/Songs"))
 	{

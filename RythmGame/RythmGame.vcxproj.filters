@@ -146,5 +146,8 @@
     <ClInclude Include="ScorePanel.hpp">
       <Filter>Header Files\Menu</Filter>
     </ClInclude>
+    <ClInclude Include="MiddleShape.hpp">
+      <Filter>Header Files\InGame</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

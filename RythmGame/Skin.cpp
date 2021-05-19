@@ -28,13 +28,15 @@ Skin::Skin(float middleRadius, std::vector<sf::Color> colors, std::vector<sf::Co
 Skin::~Skin()
 {
 	delete noteShape;
-	for (sf::Shape* shape : middleShapes)
+	for (auto shape : middleShapes)
 	{
-		delete shape;
+		delete shape.shape;
 	}
 
 	if (middleHitMarkerShape != nullptr)
 		delete middleHitMarkerShape;
+	hitSounds.clear();
+
 }
 
 void Skin::renderNote(int time, sf::RenderWindow& window, sf::Vector2f position, sf::Vector2f prevPos, int colorId, bool isNextNote)
@@ -68,56 +70,56 @@ void Skin::prepareMiddleForSong(int amountOfColors)
 	if (middleHitMarkerShape != nullptr)
 		delete middleHitMarkerShape;
 	for (auto shape : middleShapes)
-		delete shape;
+		delete shape.shape;
 	middleShapes.clear();
 
-		if (amountOfColors == 1)
-		{
-			sf::CircleShape* middle = new sf::CircleShape(middleRadius, 20);
-			middle->setOrigin(sf::Vector2f(middle->getLocalBounds().width / 2, middle->getLocalBounds().height / 2));
-			middle->setPosition(screenCenter);
-			middle->setFillColor(colors[0]);
-			//middle->setPosition(sf::Vector2f(screenCenter.x - middle->getLocalBounds().width/2, screenCenter.y - middle->getLocalBounds().height/2));
-			middleShapes.push_back(middle);
+	if (amountOfColors == 1)
+	{
+		sf::CircleShape* middle = new sf::CircleShape(middleRadius, 20);
+		middle->setOrigin(sf::Vector2f(middle->getLocalBounds().width / 2, middle->getLocalBounds().height / 2));
+		middle->setPosition(screenCenter);
+		middle->setFillColor(colors[0]);
+		//middle->setPosition(sf::Vector2f(screenCenter.x - middle->getLocalBounds().width/2, screenCenter.y - middle->getLocalBounds().height/2));
+		middleShapes.push_back(MiddleShape(middle));
 
-			middleHitMarkerShape = new sf::CircleShape(middleRadius / 2, 20);
-			middleHitMarkerShape->setOrigin(sf::Vector2f(middleHitMarkerShape->getLocalBounds().width / 2, middleHitMarkerShape->getLocalBounds().height / 2));
-			middleHitMarkerShape->setPosition(screenCenter);
+		middleHitMarkerShape = new sf::CircleShape(middleRadius / 2, 20);
+		middleHitMarkerShape->setOrigin(sf::Vector2f(middleHitMarkerShape->getLocalBounds().width / 2, middleHitMarkerShape->getLocalBounds().height / 2));
+		middleHitMarkerShape->setPosition(screenCenter);
+
+	}
+	else if (amountOfColors == 2)
+	{
+		//Not implemnted yet :P
+	}
+	else if (amountOfColors > 3)
+	{
+		sf::ConvexShape* middleHitMarker = new sf::ConvexShape(amountOfColors);
+
+		angleBetweenColors = 2 * M_PI / amountOfColors;
+		float radiusForEdge = static_cast<float>(middleRadius / std::sin(angleBetweenColors / 2));
+		for (int i = 0; i < amountOfColors; i++)
+		{
+			sf::ConvexShape* colorShape = new sf::ConvexShape(3);
+
+			colorShape->setPoint(0, sf::Vector2f(0, 0));
+			colorShape->setPoint(1, sf::Vector2f(static_cast<float>(std::sin(angleBetweenColors * i) * radiusForEdge), static_cast<float>(std::cos(angleBetweenColors * i) * radiusForEdge)));
+			colorShape->setPoint(2, sf::Vector2f(static_cast<float>(std::sin(angleBetweenColors * (static_cast<int64_t>(i) + 1))) * radiusForEdge, static_cast<float>(std::cos(angleBetweenColors * (static_cast<int64_t>(i) + 1l)) * radiusForEdge)));
+			colorShape->setFillColor(colors[i] * notPressedColorMult);
+
+			colorShape->setPosition(screenCenter);
+			middleShapes.push_back(colorShape);
+
+
+
+			middleHitMarker->setPoint(i, colorShape->getPoint(1));
 
 		}
-		else if (amountOfColors == 2)
-		{
-			//Not implemnted yet :P
-		}
-		else if (amountOfColors > 3)
-		{
-			sf::ConvexShape* middleHitMarker = new sf::ConvexShape(amountOfColors);
 
-			angleBetweenColors = 2 * M_PI / amountOfColors;
-			float radiusForEdge = static_cast<float>(middleRadius / std::sin(angleBetweenColors / 2));
-			for (int i = 0; i < amountOfColors; i++)
-			{
-				sf::ConvexShape* colorShape = new sf::ConvexShape(3);
+		middleHitMarker->setPosition(screenCenter);
+		middleHitMarkerShape = middleHitMarker;
+		middleHitMarkerShape->setScale(sf::Vector2f(0.5f, 0.5f));
 
-				colorShape->setPoint(0, sf::Vector2f(0, 0));
-				colorShape->setPoint(1, sf::Vector2f(static_cast<float>(std::sin(angleBetweenColors * i) * radiusForEdge), static_cast<float>(std::cos(angleBetweenColors * i) * radiusForEdge)));
-				colorShape->setPoint(2, sf::Vector2f(static_cast<float>(std::sin(angleBetweenColors * (static_cast<int64_t>(i) + 1))) * radiusForEdge, static_cast<float>(std::cos(angleBetweenColors * (static_cast<int64_t>(i) + 1l)) * radiusForEdge)));
-				colorShape->setFillColor(colors[i] * notPressedColorMult);
-
-				colorShape->setPosition(screenCenter);
-				middleShapes.push_back(colorShape);
-
-
-
-				middleHitMarker->setPoint(i, colorShape->getPoint(1));
-
-			}
-
-			middleHitMarker->setPosition(screenCenter);
-			middleHitMarkerShape = middleHitMarker;
-			middleHitMarkerShape->setScale(sf::Vector2f(0.5f, 0.5f));
-
-		}
+	}
 
 
 }
@@ -126,11 +128,23 @@ void Skin::renderMiddle(int time, sf::RenderWindow& window, float rotation)
 {
 	for (int i = 0; i < middleShapes.size(); i++)
 	{
-		middleShapes[i]->setRotation(rotation);
-		window.draw(*middleShapes[i]);
+		middleShapes[i].shape->setRotation(rotation);
+		window.draw(*middleShapes[i].shape);
+
+		if (middleShapes[i].lastHitTime != 0)
+		{
+			float scale = 1.3 - (static_cast<float>(time - middleShapes[i].lastHitTime) / 100) * 0.3;
+			if (scale < 1)
+				scale = 1;
+			middleShapes[i].shape->setScale(sf::Vector2f(scale, scale));
+		}
+		
+
+
 	}
 	middleHitMarkerShape->setRotation(rotation);
 	window.draw(*middleHitMarkerShape);
+
 }
 
 void Skin::renderHoldLine(int time, sf::RenderWindow& window, sf::Vector2f pos1, sf::Vector2f pos2, int colorId, bool heldOrNextNote)
@@ -148,14 +162,26 @@ void Skin::renderHoldLine(int time, sf::RenderWindow& window, sf::Vector2f pos1,
 	window.draw(line);
 }
 
-void Skin::showHitMark(HitType hitType)
+void Skin::showHitMark(HitType hitType, int colorId, int time)
 {
+	if (hitType != HitType::EARLY_MISS && hitType != HitType::LATE_MISS)
+	{
+		auto sb = hitSounds.find(hitType);
+		if (sb != hitSounds.end())
+			soundPlayer.setBuffer(*sb->second);
+		soundPlayer.setPitch(0.8f + (static_cast<float>(std::rand()) / RAND_MAX) / 2);
+		soundPlayer.play();
+		middleShapes[colorId].lastHitTime = time;
+	}
+
+
 	middleHitMarkerShape->setFillColor(hitMarkerColors[(int)hitType]);
+
 }
 
 void Skin::setColorPressed(bool held, int colorId)
 {
-	middleShapes[colorId]->setFillColor(held ? colors[colorId] : colors[colorId] * notPressedColorMult);
+	middleShapes[colorId].shape->setFillColor(held ? colors[colorId] : colors[colorId] * notPressedColorMult);
 }
 
 float Skin::getMiddleRadius()
@@ -169,4 +195,9 @@ sf::Vector2f Skin::getNoteMiddle(sf::Vector2f pos, sf::Vector2f prevPos)
 	float dist = std::sqrt(delta.x * delta.x + delta.y * delta.y);
 	delta /= dist;
 	return pos + delta * (noteShape->getLocalBounds().width / 2);
+}
+
+void Skin::setHitSounds(std::unordered_map<HitType, sf::SoundBuffer*>& hitSounds)
+{
+	this->hitSounds = hitSounds;
 }

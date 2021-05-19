@@ -186,6 +186,7 @@
     <ClInclude Include="KeyBindDefault.hpp" />
     <ClInclude Include="LineNotePosFunc.hpp" />
     <ClInclude Include="MenuManager.hpp" />
+    <ClInclude Include="MiddleShape.hpp" />
     <ClInclude Include="Note.hpp" />
     <ClInclude Include="NotePosFunc.hpp" />
     <ClInclude Include="Panel.hpp" />

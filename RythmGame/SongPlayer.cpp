@@ -122,7 +122,7 @@ void SongPlayer::popNoteWithColor(InputData inputData)
 		if ((*it)->color == inputData.colorToPop)
 		{
 			int hitDelta = inputData.time - (*it)->hitTime;
-			noteHitUpdate(hitDelta, inputData.colorToPop, (*it)->noteType);
+			noteHitUpdate(hitDelta, inputData.colorToPop, (*it)->noteType, inputData.time);
 			nonPoppedNoteBuffer.erase(it);
 			return;
 		}
@@ -146,7 +146,7 @@ void SongPlayer::popNoteWithColor(InputData inputData)
 				if (((*it)->noteType == Note::NoteType::HOLD_START || (*it)->noteType == Note::NoteType::PRESS) && hitDelta > -missTime)
 				{
 					notes.erase(it);
-					noteHitUpdate(hitDelta, inputData.colorToPop, (*it)->noteType);
+					noteHitUpdate(hitDelta, inputData.colorToPop, (*it)->noteType, inputData.time);
 					return;
 				}
 				break;
@@ -154,7 +154,7 @@ void SongPlayer::popNoteWithColor(InputData inputData)
 				if ((*it)->noteType == Note::NoteType::HOLD_END && hitDelta > -(*it)->getHoldTime())
 				{
 					notes.erase(it);
-					noteHitUpdate(hitDelta, inputData.colorToPop, (*it)->noteType);
+					noteHitUpdate(hitDelta, inputData.colorToPop, (*it)->noteType, inputData.time);
 					return;
 				}
 				break;
@@ -192,39 +192,39 @@ void SongPlayer::clearOldNotesInPopBuffer(int time)
 	std::vector<Note*>::iterator it = nonPoppedNoteBuffer.begin();
 	while (it != nonPoppedNoteBuffer.end() && time - (*it)->hitTime > missTime)
 	{
-		noteHitUpdate(missTime, (*it)->color, (*it)->noteType);
+		noteHitUpdate(missTime, (*it)->color, (*it)->noteType, time);
 		it = nonPoppedNoteBuffer.erase(it);
 	}
 }
 
-void SongPlayer::noteHitUpdate(int hitDelta, int color, Note::NoteType noteType)
+void SongPlayer::noteHitUpdate(int hitDelta, int color, Note::NoteType noteType, int time)
 {
 	if (hitDelta < -hitTime)
 	{
 		if (hitDelta < -missTime)
 			return;
-		skin.showHitMark(Skin::HitType::EARLY_MISS);
+		skin.showHitMark(Skin::HitType::EARLY_MISS, color, time);
 		totalMissTimeInMs += hitTime;
 		if (noteType == Note::NoteType::HOLD_START)
 			onHoldStartMiss(color);
 	}
 	else if (hitDelta < -perfectTime)
 	{
-		skin.showHitMark(Skin::HitType::EARLY_HIT);
+		skin.showHitMark(Skin::HitType::EARLY_HIT, color, time);
 		totalMissTimeInMs -= hitDelta;
 	}
 	else if (hitDelta < perfectTime)
 	{
-		skin.showHitMark(Skin::HitType::PERFECT);
+		skin.showHitMark(Skin::HitType::PERFECT, color, time);
 	}
 	else if (hitDelta < hitTime)
 	{
-		skin.showHitMark(Skin::HitType::LATE_HIT);
+		skin.showHitMark(Skin::HitType::LATE_HIT, color, time);
 		totalMissTimeInMs += hitDelta;
 	}
 	else if (hitDelta <= missTime)
 	{
-		skin.showHitMark(Skin::HitType::LATE_MISS);
+		skin.showHitMark(Skin::HitType::LATE_MISS, color, time);
 		totalMissTimeInMs += hitTime;
 		if (noteType == Note::NoteType::HOLD_START)
 			onHoldStartMiss(color);
