@@ -10,14 +10,14 @@
 
 
 const sf::Vector2f screenSize(1920, 1080);
-const std::vector<sf::Color> defaultNoteColors = { sf::Color(255, 0, 102), sf::Color(0, 255, 0), sf::Color(148, 0, 211), sf::Color::Cyan };
-const std::vector<sf::Color> defaultHitColors = { sf::Color::Red, sf::Color(255,140,0), sf::Color::White, sf::Color(0, 191, 255), sf::Color::Blue };
+const std::vector<sf::Color> defaultNoteColors = { sf::Color(255, 182, 193), sf::Color(255, 140, 0), sf::Color(148, 0, 211), sf::Color::Cyan };
+const std::vector<sf::Color> defaultHitColors = { sf::Color::Red, sf::Color::Green, sf::Color::Yellow, sf::Color::Green, sf::Color::Red };
 
 
 GameManager::GameManager() : skin(30, defaultNoteColors, defaultHitColors, screenSize, sf::Color(126, 126, 126, 255)), window(sf::VideoMode((unsigned int)screenSize.x, (unsigned int)screenSize.y), "Rhythm Game"), songPlayer{ nullptr }, input(keyBinds, mouseButtonBinds), selectedSongData{ nullptr }, playbackSpeed{ 1 }, menuManager(*this)
 {
 
-	playbackSpeed = 0.1f;
+	playbackSpeed = 1.0f;
 	std::string basepath = std::filesystem::current_path().string();
 	window.setKeyRepeatEnabled(false);
 	font.loadFromFile(basepath + "/Fonts/good_times_rg.ttf");

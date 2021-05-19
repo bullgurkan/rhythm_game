@@ -8,11 +8,11 @@
 Skin::Skin(float middleRadius, std::vector<sf::Color> colors, std::vector<sf::Color> hitMarkerColors, sf::Vector2f screenSize, sf::Color notPressedColorMult) : middleRadius{ middleRadius }, noteShape{ nullptr }, middleShapes(), middleHitMarkerShape{ nullptr }, colors{ colors }, hitMarkerColors{ hitMarkerColors }, notPressedColorMult{ notPressedColorMult }, screenCenter(screenSize.x / 2, screenSize.y / 2)
 {
 	sf::ConvexShape* noteShapeTri = new sf::ConvexShape(3);
-	noteShapeTri->setPoint(0, sf::Vector2f(0, 10));
-	noteShapeTri->setPoint(1, sf::Vector2f(25, 0));
-	noteShapeTri->setPoint(2, sf::Vector2f(25, 20));
+	noteShapeTri->setPoint(0, sf::Vector2f(-15, 0));
+	noteShapeTri->setPoint(1, sf::Vector2f(15, -10));
+	noteShapeTri->setPoint(2, sf::Vector2f(15, 10));
 
-	noteShapeTri->setOrigin(sf::Vector2f(0, 10));
+	noteShapeTri->setOrigin(sf::Vector2f(0, 0));
 
 	//noteShapeTri->setOutlineColor(sf::Color::White);
 
@@ -20,9 +20,10 @@ Skin::Skin(float middleRadius, std::vector<sf::Color> colors, std::vector<sf::Co
 
 	gridShape = new sf::RectangleShape();
 	gridShape->setFillColor(sf::Color::Transparent);
-	
+
 	gridShape->setOutlineThickness(2);
 }
+
 
 Skin::~Skin()
 {
