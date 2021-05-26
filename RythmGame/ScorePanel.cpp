@@ -35,13 +35,13 @@ void ScorePanel::onSceneLoad()
 	std::string grade;
 	if (acc == 100)
 		grade = "SS";
-	else if (acc > 95)
+	else if (acc >= 95)
 		grade = "S";
-	else if (acc > 90)
+	else if (acc >= 90)
 		grade = "A";
-	else if (acc > 80)
+	else if (acc >= 80)
 		grade = "B";
-	else if (acc > 70)
+	else if (acc >= 70)
 		grade = "C";
 	else if (acc > 0)
 		grade = "D";
